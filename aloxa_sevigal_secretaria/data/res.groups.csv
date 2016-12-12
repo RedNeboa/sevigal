@@ -1,0 +1,4 @@
+"id","name","users/id",category_id/id,implied_ids/id
+"sevigal_partner_group","Cliente",,"aloxa_sevigal_secretaria.category_id",
+"sevigal_user_group","Usuario",,"aloxa_sevigal_secretaria.category_id","base.group_sale_manager,aloxa_sevigal_secretaria.sevigal_partner_group"
+"superadmin_group","SuperAdmin","base.user_root",,

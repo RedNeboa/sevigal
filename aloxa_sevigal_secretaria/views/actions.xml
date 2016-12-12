@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!--  ACTIONS -->	
+	<record id="sevigal_action_llamada_kanban" model="ir.actions.act_window">
+		<field name="name">Tablero Llamadas</field>
+		<field name="res_model">crm.phonecall</field>		
+		<field name="view_mode">kanban,tree,form,calendar</field>		
+		<field name="view_type">form</field>
+		<field name="context">{'search_default_llamadas_dia': 1,}</field>						 
+	</record>
+	<record id="sevigal_action_opciones_form" model="ir.actions.act_window">
+		<field name="name">Opciones</field>
+		<field name="res_model">sevigal.opciones</field>		
+		<field name="view_mode">tree,form</field>		
+		<field name="view_type">form</field>							 
+	</record>
+	<record id="sevigal_action_llamadas_realizadas_form" model="ir.actions.act_window">
+		<field name="name">Llamadas Realizadas</field>
+		<field name="res_model">sevigal.llamada.realizada</field>		
+		<field name="view_mode">tree,form</field>		
+		<field name="view_type">form</field>
+		<field name="context">{'search_default_registrado': 1}</field>							 
+	</record>
+	<record id="sevigal_action_fax2mails_form" model="ir.actions.act_window">
+		<field name="name">Fax2Mails</field>
+		<field name="res_model">sevigal.fax2mail</field>		
+		<field name="view_mode">tree,form</field>		
+		<field name="view_type">form</field>
+		<field name="context">{'search_default_registrado': 1}</field>							 
+	</record>
+	<record id="sevigal_action_servicios_exclusivos_form" model="ir.actions.act_window">
+		<field name="name">Servicios Exclusivos</field>
+		<field name="res_model">sevigal.servicio.exclusivo</field>		
+		<field name="view_mode">tree,form</field>		
+		<field name="view_type">form</field>
+		<field name="context">{'search_default_registrado': 1}</field>
+	</record>
+	<record id="sevigal_action_avisos_form" model="ir.actions.act_window">
+		<field name="name">Avisos</field>
+		<field name="res_model">sevigal.aviso</field>		
+		<field name="view_mode">tree</field>		
+		<field name="view_type">form</field>
+		<field name="auto_refresh">1</field>
+		<field name="context">{'search_default_no_leido': 1}</field>
+	</record>
+	<record id="website_forum.action_forum_post" model="ir.actions.act_window">		
+		<field name="res_model">forum.post</field>		
+		<field name="context">{'search_default_sin_respuesta_valida': 1,
+							   'search_default_group_by_tipo': 1}</field>	
+	</record>
+	</data>
+</openerp>

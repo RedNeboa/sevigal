@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!-- FORMS -->
+	<!-- FORM  de Grupos Usuarios -->	
+    <record id="user_groups_sevigal_form" model="ir.ui.view">
+        <field name="name">Formulario Grupos de Usuarios</field>
+        <field name="model">res.users</field>
+		<field name="inherit_id" ref="base.view_users_form"/>                
+        <field name="arch" type="xml">
+        <xpath expr="//page[@string='Access Rights']" position="attributes">           	        			
+			<attribute name="groups">aloxa_sevigal_secretaria.superadmin_group</attribute>  				            		
+        </xpath>	
+        </field>
+    </record>
+	<!-- SEARCH de usuarioss -->
+	<record model="ir.ui.view" id="res_users_sevigal_view_inherit_search">
+        <field name="name">Filtros de Usuarios</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="share.res_users_search_sharing" /> 
+        <field name="arch" type="xml">
+        	<xpath expr="filter[@name='no_share']" position='replace'>
+				<filter name="no_share" string="Todos los Usuarios" icon="terp-partner" domain="[]"/>     				        							
+			</xpath> 
+		</field>
+	</record>
+	</data>
+</openerp>

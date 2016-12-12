@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<record id="invoice_form" model="ir.ui.view">
+		<field name="model">account.invoice</field>
+		<field name="inherit_id" ref="account.invoice_form" /> 
+		<field name="arch" type="xml">
+			<xpath expr="//page[@string='Other Info']/group[@col='4']/group" position="inside">
+				<field name="invoice_date_start" />
+				<field name="invoice_date_end" />
+			</xpath>			 	
+		</field>
+	</record>
+
+</data>
+</openerp>

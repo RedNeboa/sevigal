@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!-- FORMS -->
+	<!-- FORM  mensaje foro -->	
+    <record id="forum_post_form_inherit" model="ir.ui.view">
+        <field name="name">Mensaje Foro Form</field>
+        <field name="model">forum.post</field>
+        <field name="inherit_id" ref="website_forum.view_forum_post_form"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//field[@name='parent_id']" position="after">
+        		<field name="tipo" />
+        		<field name="content" />
+        		<field name="partner_id" />
+        	</xpath>
+			<xpath expr='//field[@name="closed_reason_id"]' position="attributes">
+		    		<attribute name="invisible">True</attribute>						
+			</xpath>			
+			<xpath expr='//field[@name="closed_uid"]' position="attributes">
+			    	<attribute name="invisible">True</attribute>						
+			</xpath>			
+			<xpath expr='//field[@name="closed_date"]' position="attributes">
+			    	<attribute name="invisible">True</attribute>						
+			</xpath>			
+			<xpath expr='//field[@name="vote_count"]' position="attributes">
+			    	<attribute name="invisible">True</attribute>						
+			</xpath>			
+			<xpath expr='//field[@name="favourite_count"]' position="attributes">
+			    	<attribute name="invisible">True</attribute>						
+			</xpath>			
+			<xpath expr='//field[@name="favourite_count"]' position="attributes">
+			    	<attribute name="invisible">True</attribute>						
+			</xpath>		
+			<xpath expr='//field[@name="create_date"]' position="attributes">
+			    	<attribute name="string">Fecha</attribute>						
+			</xpath>
+        </field>
+    </record>
+	<!-- TREE  mensaje foro -->	
+    <record id="forum_post_tree_inherit" model="ir.ui.view">
+        <field name="name">Mensaje Foro Tree</field>
+        <field name="model">forum.post</field>
+        <field name="inherit_id" ref="website_forum.view_forum_post_list"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//tree[@string='Forum Posts']" position="replace">
+        		<tree string="Forum Posts">
+        			<field name="name"/>
+	        		<field name="content"/>     		
+	        		<field name="create_uid"/>        		
+	        		<field name="partner_id"/>
+	        		<field name="is_correct"/>
+        		</tree>
+        	</xpath>
+        </field>
+    </record>
+	<!-- SEARCH de mensajes -->
+	<record model="ir.ui.view" id="forum_post_sevigal_view_inherit_search">
+        <field name="name">Filtros de Mensajes</field>
+        <field name="model">forum.post</field>
+        <field name="inherit_id" ref="website_forum.view_forum_post_search" /> 
+        <field name="arch" type="xml">
+        	<xpath expr="group[@string='Group By']" position='before'>
+        		<filter name="notificaciones" string="Notificaciones"
+        				domain="[('tipo','=','Notificacion')]"/>
+        		<filter name="mensajes" string="Mensajes Web"
+        				domain="[('tipo','=','Mensaje')]"/>
+        		<filter name="viajes" string="Viajes"
+        				domain="[('tipo','=','Viaje')]"/>	
+        		<filter name="reuniones" string="Reunión"
+        				domain="[('tipo','=','Reunion')]"/>	
+        		<filter name="sin_respuesta_valida" string="Sin Respuesta Válida"
+        				domain="[('is_correct','=',False)]"/>	       				        							
+			</xpath> 
+        	<xpath expr="group[@string='Group By']/filter[@string='Forum']" position='before'>
+        		<filter name="group_by_tipo" string="Tipo" domain="[]" context="{'group_by': 'tipo'}"/>       				        							
+			</xpath> 
+		</field>
+	</record>
+	</data>
+</openerp>

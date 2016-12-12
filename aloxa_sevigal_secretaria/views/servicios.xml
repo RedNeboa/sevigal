@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!-- FORMS -->
+	<!-- FORM  de llamadas realizadas -->
+    <record id="llamada_realizada_form" model="ir.ui.view">
+        <field name="name">Form de Llamadas Realizadas</field>
+        <field name="model">sevigal.llamada.realizada</field>		                
+        <field name="arch" type="xml">
+        <form string="Llamadas Realizadas" editable="bottom">
+        	<header>
+				<button type="object" class="oe_highlight"					
+						name="registrar_consumo_servicio" string="Registrar"
+						attrs="{'invisible':[('registrado','=',True)]}"
+						context="{'cantidad_servicio':duracion, 'product_id':product_id}"/>
+				<button type="object" class="oe_highlight"
+						attrs="{'invisible':[('mail_enviado','=',True)]}"			
+						name="enviar_email" string="Email"/>
+        	</header>
+        	<sheet string="Llamadas Realizadas">
+        	<group col="4">
+        		<field name="partner_id" colspan="2"/>
+	        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Llamada Realizada')]"
+	        		   context="{'view_llamada_realizada': 1}" colspan="2"/>
+	        	<field name="telefono"/>
+	        	<!-- field name="duracion"/-->
+	        	<field name="duracion" widget="float_time" class="oe_inline" style="vertical-align:baseline"/>
+	        	<field name="descripcion" colspan="4"/>
+	        	<field name="registrado" invisible="1"/>
+	        	<field name="mail_enviado" invisible="1"/>
+	        	<newline/>
+	        	<field name="linea_fact_recurr_id"/>
+	        	<newline/>
+		
+				<!-- <button type="object" class="oe_highlight"					
+						name="registrar_consumo_servicio" string="Registrar"
+						attrs="{'invisible':[('registrado','=',True)]}"
+						context="{'cantidad_servicio':duracion, 'product_id':product_id}"/>
+				<newline/>
+				<button type="object" class="oe_highlight"
+						attrs="{'invisible':[('mail_enviado','=',True)]}"			
+						name="enviar_email" string="Email"/> -->
+        	</group>
+        	</sheet>   	      				            		
+        </form>	
+        </field>
+    </record>
+	<!-- FORM  de fax2mail -->
+    <record id="fax2mail_form" model="ir.ui.view">
+        <field name="name">Form de Fax2Mail</field>
+        <field name="model">sevigal.fax2mail</field>		                
+        <field name="arch" type="xml">
+        <form string="Fax2Mails" editable="bottom">
+        	<sheet string="Fax2Mails">
+        	<group col="4">
+        		<field name="partner_id"/>
+	        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Fax2Mail')]"
+	        		   context="{'view_fax2mail': 1}"/>
+	        	<field name="telefono"/>
+	        	<field name="email"/>
+	        	<field name="descripcion" colspan="4"/>	        	
+	        	<field name="registrado" />
+	        	<newline/>
+	        	<field name="linea_fact_recurr_id"/>
+	        	<newline/>
+ 				<button type="object" class="oe_highlight"					
+						name="registrar_consumo_servicio" string="Registrar"
+						attrs="{'invisible':[('registrado','=',True)]}"
+						context="{'cantidad_servicio':1, 'product_id':product_id}"/>
+        	</group>
+        	</sheet>      				            		
+        </form>	
+        </field>
+    </record>
+	<!-- FORM  de servicios exclusivos -->
+    <record id="servicio_exclusivo_form" model="ir.ui.view">
+        <field name="name">Form de Servicios Exclusivos</field>
+        <field name="model">sevigal.servicio.exclusivo</field>		                
+        <field name="arch" type="xml">
+        <form string="Servicios Exclusivos" editable="bottom">
+        	<sheet string="Servicios Exclusivos">
+        	<group col="4">
+        		<field name="partner_id"/>
+	        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Servicio Exclusivo')]"
+	        		   context="{'view_servicio_exclusivo': 1}" colspan="2"/>
+	        	<field name="unidades"/>
+	        	<newline/>
+	        	<field name="descripcion" colspan="4"/>	        	
+	        	<field name="registrado" invisible="1"/>	        	
+	        	<newline/>
+	        	<field name="linea_fact_recurr_id"/>
+	        	<newline/>
+				<!-- <button type="object" class="oe_highlight"					
+						name="registrar_consumo_servicio" string="Registrar"
+						attrs="{'invisible':[('registrado','=',True)]}"
+						context="{'cantidad_servicio':unidades, 'product_id':product_id}"/> -->
+        	</group>
+        	</sheet>  	      				            		
+        </form>	
+        </field>
+    </record>
+<!-- TREES -->
+	<!-- TREE  de llamadas transferidas -->
+    <record id="llamada_transferida_tree" model="ir.ui.view">
+        <field name="name">Tree de Llamadas Transferidas</field>
+        <field name="model">sevigal.llamada.transferida</field>		                
+        <field name="arch" type="xml">
+        <tree string="Llamadas Transferidas" editable="bottom">
+        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Llamada Transferida')]"/> 
+        	<field name="telefono"/>
+        	<!-- field name="duracion"/-->
+        	<field name="duracion" widget="float_time" class="oe_inline" style="vertical-align:baseline"/>  				            		
+        </tree>	
+        </field>
+    </record>
+	<!-- TREE  de fax2mails -->
+    <!-- record id="fax2mail_llamada_tree" model="ir.ui.view">
+        <field name="name">Tree de Fax2Mails</field>
+        <field name="model">sevigal.fax2mail</field>		                
+        <field name="arch" type="xml">
+        <tree string="Fax2Mails" editable="bottom">
+        	<field name="product_id" domain="[('tipo_producto_pack', '=', 'Fax2Mail')]"/> 
+        	<field name="telefono"/>
+        	<field name="email"/>      				            		
+        </tree>	
+        </field>
+    </record-->    
+	<!-- TREE  de llamadas realizadas -->
+    <record id="llamada_realizada_tree" model="ir.ui.view">
+        <field name="name">Tree de Llamadas Realizadas</field>
+        <field name="model">sevigal.llamada.realizada</field>		                
+        <field name="arch" type="xml">
+        <tree string="Llamadas Realizadas">
+        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Llamada Realizada')]"
+        		   context="{'view_llamada_realizada': 1}"/>
+        	<field name="partner_id"/>
+        	<field name="telefono"/>
+        	<field name="registrado" invisible="1"/>
+        	<field name="mail_enviado" invisible="1"/>
+        	<!-- field name="duracion"/-->
+        	<field name="duracion" widget="float_time" class="oe_inline" style="vertical-align:baseline"/>     	        			
+        	<field name="descripcion"/>
+        	<field name="linea_fact_recurr_id"/>        	
+        	<field name="create_date" string="Creada"/>
+			<button type="object" class="oe_highlight"					
+					name="registrar_consumo_servicio" string="Registrar"
+					attrs="{'invisible':[('registrado','=',True)]}"
+					context="{'cantidad_servicio':duracion, 'product_id':product_id}"/>
+			<button type="object" class="oe_highlight"
+					attrs="{'invisible':[('mail_enviado','=',True)]}"			
+					name="enviar_email" string="Email"/>					  	      				            		
+        </tree>	
+        </field>
+    </record>
+	<!-- TREE  de fax2mail -->
+    <record id="fax2mail_tree" model="ir.ui.view">
+        <field name="name">Tree de Fax2Mails</field>
+        <field name="model">sevigal.fax2mail</field>		                
+        <field name="arch" type="xml">
+        <tree string="Fax2Mails" editable="bottom">
+        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Fax2Mail')]"
+        		   context="{'view_fax2mail': 1}"/>
+        	<field name="partner_id"/> 
+        	<field name="telefono"/>
+        	<field name="email"/>
+        	<field name="registrado" invisible="1"/>    	        			
+        	<field name="descripcion"/>
+        	<field name="linea_fact_recurr_id"/>
+        	<field name="create_date" string="Creado"/>
+			<button type="object" class="oe_highlight"
+					name="registrar_consumo_servicio" string="Registrar"
+					attrs="{'invisible':[('registrado','=',True)]}"
+					context="{'cantidad_servicio':1, 'product_id':product_id}"/>       	      				            		
+        </tree>	
+        </field>
+    </record>
+	<!-- TREE  de servicios exclusivos -->
+    <record id="servicios_exclusivos_tree" model="ir.ui.view">
+        <field name="name">Tree de Servicios Exclusivos</field>
+        <field name="model">sevigal.servicio.exclusivo</field>		                
+        <field name="arch" type="xml">
+        <tree string="Servicios Exclusivos" editable="bottom">
+        	<field name="product_id" domain="[('tipo_producto_servicio', '=', 'Servicio Exclusivo')]"
+        		   context="{'view_servicio_exclusivo': 1}"/>
+        	<field name="partner_id"/>
+        	<field name="unidades"/>
+        	<field name="registrado" invisible="1"/>      	        			
+        	<field name="descripcion"/>
+        	<field name="linea_fact_recurr_id"/>
+        	<field name="create_date" string="Creado"/>
+			<button type="object" class="oe_highlight"
+					name="registrar_consumo_servicio" string="Registrar"
+					attrs="{'invisible':[('registrado','=',True)]}"
+					context="{'cantidad_servicio':unidades, 'product_id':product_id}"/>        	      	      				            		
+        </tree>	
+        </field>
+    </record>
+<!--  SEARCH -->
+	<!-- SEARCH product.product para agregar filtros -->
+	<record model="ir.ui.view" id="crm_phonecall_sevigal_view_inherit_search">
+        <field name="name">Filtros de Llamadas</field>
+        <field name="model">crm.phonecall</field>
+        <field name="inherit_id" ref="crm.view_crm_case_phonecalls_filter" /> 
+        <field name="arch" type="xml">
+        	<xpath expr="filter[@string='My Phonecalls']" position='before'>
+        		<filter name= "llamadas_dia" string="Llamadas Día"
+        				domain="[('date','>=',datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>				
+			</xpath> 
+		</field>
+	</record>
+	<!-- SEARCH llamadas realizadas -->
+	<record model="ir.ui.view" id="servigal_llamada_realizada_view_search">
+        <field name="name">Filtros de Llamadas Realizadas</field>
+        <field name="model">sevigal.llamada.realizada</field>
+        <field name="arch" type="xml">
+        	<search>
+        		<group expand="0" string="Agrupar Por">
+					<filter name="group_by_partner_id" string="Cliente"
+					        context="{'group_by': 'partner_id'}"/>
+					<filter name="registrado" string="No Registradas"
+					        domain="[('registrado','=',False)]"/>
+		        </group>
+        	</search>
+		</field>
+	</record>
+	<!-- SEARCH fax2mail -->
+	<record model="ir.ui.view" id="servigal_fax2mail_view_search">
+        <field name="name">Filtros de Fax2Mails</field>
+        <field name="model">sevigal.fax2mail</field>
+        <field name="arch" type="xml">
+        	<search>
+        		<group expand="0" string="Agrupar Por">
+					<filter name="group_by_partner_id" string="Cliente"
+					        context="{'group_by': 'partner_id'}"/>
+					<filter name="registrado" string="No Registrados"
+					        domain="[('registrado','=',False)]"/>					        
+		        </group>
+        	</search>
+		</field>
+	</record>
+	<!-- SEARCH servicios exclusivos -->
+	<record model="ir.ui.view" id="servigal_servicio_exclusivo_view_search">
+        <field name="name">Filtros de Servicios Exclusivos</field>
+        <field name="model">sevigal.servicio.exclusivo</field>
+        <field name="arch" type="xml">
+        	<search>
+        		<group expand="0" string="Agrupar Por">
+					<filter name="group_by_partner_id" string="Cliente"
+					        context="{'group_by': 'partner_id'}"/>
+					<filter name="registrado" string="No Registrados"
+					        domain="[('registrado','=',False)]"/>					        
+		        </group>
+        	</search>
+		</field>
+	</record>
+	</data>
+</openerp>

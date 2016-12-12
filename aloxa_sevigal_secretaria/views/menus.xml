@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!-- MENUITEMS -->	  
+	<menuitem id="sevigal_menu" name="Sevigal" sequence="1"
+			  groups="aloxa_sevigal_secretaria.sevigal_user_group,aloxa_sevigal_secretaria.sevigal_user_group"/>
+	<menuitem id="sevigal_menu_llamadas" name="Llamadas"
+		      parent="sevigal_menu" sequence="10"/>
+	<menuitem id="sevigal_llamadas_registro_kanban" name="Registro"
+		      parent="sevigal_menu_llamadas"
+		      action="sevigal_action_llamada_kanban"/>
+	<menuitem id="sevigal_menu_servicios" name="Servicios"
+		      parent="sevigal_menu" sequence="15"/>
+	<menuitem id="sevigal_llamadas_realizadas" name="Llamadas Realizadas"
+		      parent="sevigal_menu_servicios"
+		      action="sevigal_action_llamadas_realizadas_form"/>
+	<menuitem id="sevigal_fax2mails" name="Fax2Mails"
+		      parent="sevigal_menu_servicios"
+		      action="sevigal_action_fax2mails_form"/>
+	<menuitem id="sevigal_servicios_exclusivos" name="Servicios Exclusivos"
+		      parent="sevigal_menu_servicios"
+		      action="sevigal_action_servicios_exclusivos_form"/>
+	<menuitem id="sevigal_menu_agenda" name="Agenda"
+		      parent="sevigal_menu" sequence="20"/>
+	<menuitem id="sevigal_agendas_calendar" name="Calendario"
+		      parent="sevigal_menu_agenda"
+		      action="calendar.action_calendar_event"/>
+	<menuitem id="sevigal_menu_mensajes" name="Mensajes"
+		      parent="sevigal_menu" sequence="5"/>
+		      
+	<!-- 
+	<menuitem id="sevigal_mensajes_foros" name="Foros"
+		      parent="sevigal_menu_mensajes"
+		      action="website_forum.action_forum_forum"/>
+		      
+	-->
+<!-- 	<menuitem id="sevigal_mensajes_bandeja" name="Bandeja de Entrada"
+		      parent="sevigal_menu_mensajes"
+		      action="mail.action_mail_inbox_feeds" sequence="1"/> -->	
+	<menuitem id="sevigal_mensajes_mensajes" name="Mensajes"
+		      parent="sevigal_menu_mensajes" sequence="2"
+		      action="website_forum.action_forum_post"/>
+	<menuitem id="sevigal_mensajes_avisos" name="Avisos"
+		      parent="sevigal_menu_mensajes" sequence="1"
+		      action="sevigal_action_avisos_form"/>		      	      
+	<menuitem id="sevigal_menu_crm" name="CRM"
+		      parent="sevigal_menu" sequence="30"/>
+	<menuitem id="sevigal_menu_config" name="Configuración"
+		      parent="sevigal_menu" sequence="60"
+		      groups="aloxa_sevigal_secretaria.sevigal_user_group"/>
+	<menuitem id="sevigal_menu_contratos" name="Contratos"
+		      parent="sevigal_menu" sequence="40"/>
+	<menuitem id="sevigal_crm_oportunidades" name="Oportunidades"
+		      parent="sevigal_menu_crm"
+		      action="crm.crm_case_category_act_oppor11"/>
+	<menuitem id="sevigal_crm_clientes" name="Clientes"
+		      parent="sevigal_menu_crm"
+		      action="base.action_partner_form"/>
+	<menuitem id="sevigal_crm_facturas" name="Facturas"
+		      parent="sevigal_menu_crm"
+		      action="account.action_invoice_tree1"/>		      		      
+	<menuitem id="sevigal_contratos" name="Contratos"
+		      parent="sevigal_menu_contratos"
+		      action="account_analytic_analysis.action_account_analytic_overdue_all"/>
+	<menuitem id="sevigal_opciones" name="Opciones"
+		      parent="sevigal_menu_config"
+		      action="sevigal_action_opciones_form"/>
+	<menuitem id="sevigal_usuarios" name="Usuarios"
+		      parent="sevigal_menu_config"
+		      action="base.action_res_users"/>
+	<menuitem id="sevigal_menu_productos" name="Productos"
+		      parent="sevigal_menu" sequence="50"/>
+	<menuitem id="sevigal_productos" name="Productos"
+		      parent="sevigal_menu_productos"
+		      action="product.product_normal_action_sell"/>
+	<menuitem id="sevigal_empresa" name="Empresa"
+		      parent="sevigal_menu_config"
+		      action="base.action_res_company_form"/>		      	      
+	</data>
+</openerp>

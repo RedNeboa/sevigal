@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<template id="report_invoice_document" inherit_id="account.report_invoice_document">
+		<xpath expr="//div[@class='row mt32 mb32']/div[@t-if='o.reference']" position="before">
+	        <div class="col-xs-2" t-if="o.invoice_date_start and o.invoice_date_end">
+	            <strong>Período de facturación</strong>
+	            <table>
+		            <tbody>
+		            	<tr>
+		            		<td style="text-align:right;">De:</td>
+		            		<td>&amp;nbsp;</td>
+		            		<td><span t-field="o.invoice_date_start"/></td>
+		            	</tr>
+		            	<tr>
+			            	<td style="text-align:right;">A:</td>
+			            	<td>&amp;nbsp;</td>
+			            	<td><span t-field="o.invoice_date_end"/></td>
+		            	</tr>
+		            </tbody>
+	            </table>
+	        </div>
+		</xpath>
+	</template>
+
+</data>
+</openerp>

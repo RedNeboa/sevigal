@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+<!-- WORKFLOWS -->
+	<!-- WORKFLOW Evento Calendario -->
+		<record id="calendar_event_sevigal_workflow" model="workflow">
+		    <field name="name">calendar.event.sevigal.workflow</field>
+		    <field name="osv">calendar.event</field>
+		    <field name="on_create">True</field>
+		</record>
+		<!-- ACTIVITIES -->
+		<record id="calendar_event_activity_inicial" model="workflow.activity">
+		    <field name="wkf_id" ref="calendar_event_sevigal_workflow"/>
+		    <field name="flow_start">True</field>
+		    <field name="name">calendar event inicial</field>
+		    <field name="split_mode">OR</field>
+		    <field name="kind">dummy</field>		    
+		</record>
+		<record id="calendar_event_activity_creado" model="workflow.activity">
+		    <field name="wkf_id" ref="calendar_event_sevigal_workflow"/>		    
+		    <field name="name">calendar event creado</field>
+		    <field name="kind">function</field>
+		    <field name="action">registrar_apunte()</field>		    
+		</record>
+		<record id="calendar_event_activity_final" model="workflow.activity">
+		    <field name="wkf_id" ref="calendar_event_sevigal_workflow"/>
+		    <field name="flow_stop">True</field>
+		    <field name="name">calendar event final</field>
+		    <field name="kind">dummy</field>
+		</record>
+		<!-- TRANSITIONS -->
+		<record id="calendar_event_trans_inicial_creado" model="workflow.transition">
+		    <field name="act_from" ref="calendar_event_activity_inicial"/>
+		    <field name="act_to" ref="calendar_event_activity_creado"/>
+		    <field name="condition">(state == 'draft')</field>
+		</record>
+		<record id="calendar_event_trans_creado_final" model="workflow.transition">
+		    <field name="act_from" ref="calendar_event_activity_creado"/>
+		    <field name="act_to" ref="calendar_event_activity_final"/>		    
+		</record>
+	<!-- WORKFLOW Llamadas -->
+		<record id="llamada_sevigal_workflow" model="workflow">
+		    <field name="name">llamada.sevigal.workflow</field>
+		    <field name="osv">crm.phonecall</field>
+		    <field name="on_create">True</field>
+		</record>
+		<!-- ACTIVITIES -->
+		<record id="activity_inicial" model="workflow.activity">
+		    <field name="wkf_id" ref="llamada_sevigal_workflow"/>
+		    <field name="flow_start">True</field>
+		    <field name="name">inicial</field>
+		    <field name="split_mode">OR</field>
+		    <field name="kind">dummy</field>		    
+		</record>
+		<record id="activity_respondida" model="workflow.activity">
+		    <field name="wkf_id" ref="llamada_sevigal_workflow"/>  
+		    <field name="name">respondida</field>		    
+		    <field name="kind">dummy</field>		    
+		</record>
+		<record id="activity_registrada" model="workflow.activity">
+		    <field name="wkf_id" ref="llamada_sevigal_workflow"/>		    
+		    <field name="name">registrada</field>
+		    <field name="kind">function</field>
+		    <field name="action">registrar_llamada()</field>		    
+		</record>
+		<record id="activity_procesada" model="workflow.activity">
+		    <field name="wkf_id" ref="llamada_sevigal_workflow"/>
+		    <field name="flow_stop">True</field>
+		    <field name="name">procesada</field>
+		    <field name="kind">dummy</field>
+		</record>
+		<!-- TRANSITIONS -->
+		<record id="trans_inicial_respondida" model="workflow.transition">
+		    <field name="act_from" ref="activity_inicial"/>
+		    <field name="act_to" ref="activity_respondida"/>		    
+		</record>
+		<record id="trans_respondida_registrada" model="workflow.transition">
+		    <field name="act_from" ref="activity_respondida"/>
+		    <field name="act_to" ref="activity_registrada"/>
+		    <field name="condition">(state == 'Registrada')</field>
+		</record>
+		<record id="trans_registrada_procesada" model="workflow.transition">
+		    <field name="act_from" ref="activity_registrada"/>
+		    <field name="act_to" ref="activity_procesada"/>		    
+		</record>
+	</data>
+</openerp>

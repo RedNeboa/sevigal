@@ -1,0 +1,1014 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+	<data>
+		
+		<!-- MENU ODOO -->
+		<template id="menu_top" inherit_id="website.user_navbar">
+			<xpath expr="//nav" position="replace"></xpath>
+		</template>
+		<!-- FIN: MENU ODOO -->
+		
+		<!-- MENU PRINCIPAL -->
+		<template id="menu_top" inherit_id="website.layout">
+			<xpath expr="//main" position="replace">
+				<main>
+					<div id="page-content">
+						<t t-raw="0"/>
+					</div>
+				</main>
+			</xpath>
+			<xpath expr="//header" position="replace">
+				<header t-if="request.session.uid">
+		        	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="slide-nav">
+  						<div class="container">
+   							<div class="navbar-header">
+    							<a class="navbar-toggle"> 
+      								<span class="sr-only">Toggle navigation</span>
+      								<span class="icon-bar"></span>
+      								<span class="icon-bar"></span>
+      								<span class="icon-bar"></span>
+     							</a>
+    							<a class="navbar-brand" href="#">Sevigal</a>
+   							</div>
+   							<div t-if="header" id="slidemenu">
+					           	<t t-if="header.get('type') == 'Notificacion'"><t t-set="url_search" t-value="'/alertas'" /></t>
+								<t t-if="header.get('type') == 'Reunion'"><t t-set="url_search" t-value="'/servicios/reuniones'" /></t>
+								<t t-if="header.get('type') == 'Viaje'"><t t-set="url_search" t-value="'/servicios/viajes'" /></t>
+								<t t-if="header.get('type') == 'Mensaje'"><t t-set="url_search" t-value="'/mensajes'" /></t>
+					            <form t-if="url_search" id="search_form" class="navbar-form navbar-right" role="search" t-attf-action="#{url_search}" method="get">
+					              	<div class="input-group">
+					                    <input type="search" class="form-control"
+					                        name="search" placeholder="Buscar un mensaje..."
+					                        t-att-value="search or ''"/>
+								      	<span class="input-group-btn">
+								        	<button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+								      	</span>
+								    </div>
+					            </form>
+						            
+          						<ul id="top_menu" class="nav navbar-nav">
+									<li t-att-class="header.get('type') == 'Index' and 'active' or '' ">
+						            	<a href="/"><i class="fa fa-home"></i> Información</a>
+						            </li>
+									<li t-att-class="header.get('type') == 'Notificacion' and 'active' or '' ">
+										<a href="/alertas"><i id="bell-icon" class="fa fa-bell"></i> Alertas <span id="unread_alerts_badge" class="badge bg-danger" style="display:none;">0</span></a>
+						           	</li>
+						            <li t-att-class="header.get('type') == 'Calendario' and 'active' or '' ">
+						          		<a href="/calendario"><i class="fa fa-calendar"></i> Calendario</a>
+						           	</li>
+						          	<li t-att-class="header.get('type') == 'Mensaje' and 'active' or '' ">
+						           		<a href="/mensajes"><i class="fa fa-envelope"></i> Mensajes</a>
+						          	</li>
+						         	<li t-att-class="(header.get('type') == 'Viaje' or header.get('type') == 'Reunion') and 'active' or '' ">
+									<a t-attf-href="#" id="menuMensajes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<i class="fa fa-clock-o"></i> Servicios
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="menuMensajes">
+										<li t-att-class="header.get('type') == 'Reunion' and 'active' or '' "><a href="/servicios/reuniones"><i class="fa fa-group"></i> Reuniones</a></li>
+										<li t-att-class="header.get('type') == 'Viaje' and 'active' or '' "><a href="/servicios/viajes"><i class="fa fa-automobile"></i> Viajes</a></li>
+									</ul>
+						           	</li>
+						           	<li t-att-class="header.get('type') == 'Factura' and 'active' or '' ">
+						            	<a href="/facturas"><i class="fa fa-cloud-download"></i> Facturas</a>
+						   			</li>
+									<li id="logout">
+										<a href="/web/session/logout?redirect=/"><i class="fa fa-sign-out"></i> Salir</a>
+						            </li>
+          						</ul>
+          					</div>
+          				</div>
+          			</div>
+				</header>
+			</xpath>
+		</template>
+		<!-- FIN: MENU PRINCIPAL -->
+
+		<template id="header" inherit_id="website_forum.header" name="Forum Index">						
+			<!-- MENU -->
+			<xpath expr="//div[@class='navbar navbar-default']" position="replace"></xpath>
+			<!-- FIN: MENU -->
+		</template>
+		
+		<!-- BOTONES LINK FORO -->
+		<template id="link_button" inherit_id="website_forum.link_button">
+			<xpath expr="//button" position="replace">
+				<t t-if="karma">
+					<button t-attf-class="fa btn-link #{classes} #{karma and 'karma_required text-muted' or ''}" t-attf-data-karma="#{karma}" disabled="disabled">
+	            		<t t-esc="label"/>
+	            	</button>
+				</t>
+				<t t-if="not karma">
+					<button t-attf-class="fa btn-link #{classes} #{karma and 'karma_required text-muted' or ''}" t-attf-data-karma="#{karma}">
+	            		<t t-esc="label"/>
+	            	</button>
+            	</t>
+			</xpath>
+		</template>
+		<!-- FIN: BOTONES LINK FORO -->
+		
+		<!-- LOGIN -->
+		<template id="login_layout" inherit_id="website.login_layout">
+			<xpath expr="//div[@class='oe_website_login_container']" position="attributes">
+				<attribute name="class">sevigal-login col-md-4 col-md-offset-4</attribute>
+			</xpath>
+		</template>
+		<template id="login" inherit_id="web.login" name="Login">
+			<xpath expr="//form[@class='oe_login_form']" position="replace">
+				<div class="col-md-12">
+					<img style="height:150px;" src="/aloxa_sevigal_website/static/src/img/LogoSevigal.png" alt="Aloxa Sevigal" class="img-responsive center-block"/>
+	                <form class="oe_login_form" role="form" t-attf-action="/web/login{{ '?debug' if debug else '' }}" method="post" onsubmit="this.action = this.action + location.hash">
+	
+	                    <t t-call="web.database_select"/>
+	
+	                    <div class="form-group field-login">
+	                        <label for="login" class="control-label">Email</label>
+	                        <input type="text" name="login" t-att-value="login" id="login" class="form-control" required="required" autofocus="autofocus"/>
+	                    </div>
+	
+	                    <div class="form-group field-password">
+	                        <label for="password" class="control-label">Contraseña</label>
+	                        <input type="password" name="password" id="password" class="form-control" required="required" t-att-autofocus="'autofocus' if login else None"/>
+	                    </div>
+	
+	                    <p class="alert alert-danger" t-if="error">
+	                        <t t-esc="error"/>
+	                    </p>
+	                    <p class="alert alert-success" t-if="message">
+	                        <t t-esc="message"/>
+	                    </p>
+	
+	                    <input type="hidden" name="redirect" t-att-value="redirect"/>
+	                    <div class="clearfix oe_login_buttons" style="margin-bottom:1em;">
+	                        <button type="submit" class="btn btn-primary">Entrar</button>
+	                    </div>
+	
+	                </form>
+                </div>
+			</xpath>
+		</template>
+		<!-- FIN: LOGIN -->
+		
+		<!-- CAJETIN DE RESPUESTA A MENSAJE -->
+		<template id="post_answer">
+		    <h3 class="mt10"><i class="fa fa-lg fa-caret-right"></i> Tu Respuesta</h3>
+		    <div id="box-cke" class="block-sevigal-simple flat-controls bg-default">
+			    <form t-attf-action="/forum/#{ slug(forum) }/post/#{slug(question)}/new" method="post" role="form">
+			        <input type="hidden" name="karma" t-attf-value="#{user.karma}" id="karma"/>
+			        <textarea name="content" id="content" class="form-control load_editor_sevigal" required="True"/>
+			        <button t-attf-class="btn btn-primary col-xs-12 col-md-3 mt16 #{not question.can_answer and 'karma_required' or ''}"
+			                id="btn_ask_your_question" t-att-data-karma="question.karma_answer">Publicar Respuesta</button>
+			    </form>
+			</div>
+		</template>
+		<!-- FIN: CAJETIN DE RESPUESTA A MENSAJE -->
+		
+		<!-- DETALLE MENSAJE -->
+		<template id="post_description_full" name="Mensaje">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		    	<div id="block-section-header" class="block-sevigal bg-default">
+		    		<h1 t-if="not is_answer" class="mt0">
+		    			<span t-field="question.name"/>
+		            	<span t-if="not question.active"><b> [Borrado]</b></span>
+		               	<span t-if="question.state == 'close'"><b> [Cerrado]</b></span>
+		    		</h1>
+		    		<div class="text-right">
+		    			<ul class="list-inline" id="options">
+		                    <li t-if="question.state != 'close'">
+		                        <t t-call="website_forum.link_button">
+		                            <t t-set="url" t-value="'/cerrar/pregunta/' + slug(question)"/>
+		                            <t t-set="label" t-value="'Cerrar'"/>
+		                            <t t-set="classes" t-value="'fa-times'"/>
+		                            <t t-set="karma" t-value="not question.can_close and question.karma_close or 0"/>
+		                        </t>
+		                    </li>
+		                    <li t-if="question.state == 'close'">
+		                        <t t-call="website_forum.link_button">
+		                            <t t-set="url" t-value="'/forum/' + slug(forum) +'/question/' + slug(question) + '/reopen'"/>
+		                            <t t-set="label" t-value="'Reabrir'"/>
+		                            <t t-set="classes" t-value="'fa-undo'"/>
+		                            <t t-set="karma" t-value="not question.can_close and question.karma_close or 0"/>
+		                        </t>
+		                    </li>
+		                    <li>
+		                        <t t-call="website_forum.link_button">
+		                            <t t-set="url" t-value="'/forum/' + slug(forum) +'/post/' + slug(question) + '/edition'"/>
+		                            <t t-set="label" t-value="'Editar'"/>
+		                            <t t-set="classes" t-value="'fa-edit'"/>
+		                            <t t-set="karma" t-value="not question.can_edit and question.karma_edit or 0"/>
+		                        </t>
+		                    </li>
+		                    <li t-if="question.active">
+		                        <t t-call="website_forum.link_button">
+		                            <t t-set="url" t-value="'/forum/' + slug(forum) +'/question/' + slug(question) + '/delete'"/>
+		                            <t t-set="label" t-value="'Borrar'"/>
+		                            <t t-set="classes" t-value="'fa-trash-o'"/>
+		                            <t t-set="karma" t-value="not question.can_unlink and question.karma_unlink or 0"/>
+		                        </t>
+		                    </li>
+		                    <li t-if="not question.active">
+		                        <t t-call="website_forum.link_button">
+		                            <t t-set="url" t-value="'/forum/' + slug(forum) +'/question/' + slug(question) + '/undelete'"/>
+		                            <t t-set="label" t-value="'Recuperar'"/>
+		                            <t t-set="classes" t-value="'fa-trash-o'"/>
+		                            <t t-set="karma" t-value="not question.can_unlink and question.karma_unlink or 0"/>
+		                        </t>
+		                    </li>
+		                </ul>
+		    		</div>
+		        </div>
+		        
+		        <div class="block-sevigal-simple bg-danger" t-if="question.state == 'close'">
+                    <p>
+                        <b>El mensaje se ha cerrado<t t-if="question.closed_reason_id"> por el motivo: <i t-esc="question.closed_reason_id.name"/></t></b>
+                    </p>
+                    <t t-if="question.closed_uid">
+                        <b>por <span t-field="question.closed_uid"
+                            t-field-options='{"widget": "contact", "fields": ["name"]}'
+                            style="display: inline-block;"/></b>
+                    </t>
+                    <b>el <span t-field="question.closed_date"/></b>
+		        </div>
+		        
+		        <div class="row">
+			     	<div class="col-xs-12 col-md-12 text-center">
+		                 <div class="text-muted text-center">
+		                     <span t-field="question.views"/> vistas
+		                 </div>
+	                 	<div class="mt4">
+			               <a title="Archivar" t-attf-data-href="/forum/#{slug(question.forum_id)}/question/#{slug(question)}/toggle_archived"
+			                   t-attf-class="archive_question no-decoration fa fa-2x fa-archive #{question.user_favourite and 'forum_favourite_question' or ''}">
+			                   <span style="font-size:x-small; display:block;">
+			                   		<t t-esc="question.user_favourite and 'Archivado' or 'Archivar'" />
+			                   </span>
+			               </a>
+	                 	</div>
+	                </div>
+                </div>
+                
+		        <div class="block-sevigal-simple bg-default">
+		        	<div class="row">
+		        		<div class="col-md-12 col-xs-12">
+				        	<table class="col-md-12 col-xs-12">
+					       		<thead>
+					       			<th></th>
+					       			<th></th>
+					       		</thead>
+					       		<tbody>
+					       			<tr>
+					       				<td style="vertical-align: bottom; text-align:right;">
+							            	<img class="pull-left img img-circle img-avatar" t-attf-src="/forum/user/#{question.create_uid.id}/avatar"/>
+							            </td>
+					       				<td style="width:100%;">
+								        	<div>
+						                        <small
+						                            t-field="question.create_uid"
+						                            t-field-options='{"widget": "contact", "country_image": false, "fields": ["name"]}'
+						                            style="display: inline-block;"/>
+						                    </div>
+								        	<div class="text-muted"><small>Mensaje enviado el <span t-field="question.create_date" t-field-options='{"format":"short"}'/></small></div>
+				        				</td>
+				        			</tr>
+				        		</tbody>
+				        	</table>
+			        	</div>
+			        </div>
+			        <div class="row">
+			        	<div class="sevigal-message-detail col-md-12 col-xs-12">
+			        		<t t-raw="question.content"/>
+			        	</div>
+		        	</div>
+		  			<div class="row">
+			        	<div class="col-md-12 col-xs-12 text-right">
+			        		<ul class="list-inline" id="options">
+			                    <li>
+			                        <a style="cursor: pointer" t-att-data-toggle="question.can_comment and 'collapse' or ''"
+			                            t-attf-class="fa fa-comment-o #{not question.can_comment and 'karma_required text-muted' or ''}"
+			                            t-attf-data-karma="#{not question.can_comment and question.karma_comment or 0}"
+			                            t-attf-data-target="#comment#{ question._name.replace('.','') + '-' + str(question.id) }">
+			                            Comentar
+			                        </a>
+			                    </li>
+			            	</ul>
+			        	</div>
+			        </div>
+			        <div class="row">
+			        	<div class="col-md-12 col-xs-12">
+				        	<t t-call="website_forum.post_comment">
+		                 		<t t-set="object" t-value="question"/>
+		              		</t>
+		              	</div>
+	              	</div>
+		        </div>
+		        <h4 t-if="question.child_ids and len(question.child_ids) > 0">
+		        	<i class="fa fa-caret-right fa-lg"></i> Respuesta
+		        </h4>
+		        
+		    	<div t-foreach="question.child_ids" t-as="answer" class="mt16 mb32">
+		    		<a t-attf-id="answer-#{str(answer.id)}"/>
+		    		<div class="block-sevigal-simple bg-default" t-attf-id="answer_#{answer.id}">
+			        	<div class="row">
+			        		<div class="col-md-12 col-xs-12">
+					        	<table class="col-md-12 col-xs-12">
+						       		<thead>
+						       			<th></th>
+						       			<th></th>
+						       			<th></th>
+						       		</thead>
+						       		<tbody>
+						       			<tr>
+						       				<td style="vertical-align: bottom; text-align:right;">
+								            	<img class="pull-left img img-circle img-avatar" t-attf-src="/forum/user/#{answer.create_uid.id}/avatar"/>
+								            </td>
+						       				<td style="width:100%;">
+									        	<div>
+							                        <small
+							                            t-field="answer.create_uid"
+							                            t-field-options='{"widget": "contact", "country_image": false, "fields": ["name"]}'
+							                            style="display: inline-block;"/>
+							                    </div>
+									        	<div class="text-muted"><small>Mensaje enviado el <span t-field="answer.create_date" t-field-options='{"format":"short"}'/></small></div>
+					        				</td>
+					        				<td>
+					        					<div class="text-muted">
+							                        <a t-attf-class="accept_answer fa fa-2x fa-check-circle no-decoration #{answer.is_correct and 'oe_answer_true' or 'oe_answer_false'} #{not answer.can_accept and 'karma_required' or ''}"
+							                            t-attf-data-karma="#{answer.karma_accept}"
+							                            t-attf-data-href="/forum/#{slug(question.forum_id)}/post/#{slug(answer)}/toggle_correct"/>
+						                    	</div>
+						                    </td>
+					        			</tr>
+					        		</tbody>
+					        	</table>
+				        	</div>
+				        </div>
+					   	<div class="row">
+				        	<div class="sevigal-message-detail col-md-12 col-xs-12">
+				        		<t t-raw="answer.content"/>
+				        	</div>
+			        	</div>
+			  			<div class="row">
+				        	<div class="col-md-12 col-xs-12 text-right">
+				        		<ul class="list-inline" id="options">
+		                            <li>
+		                                <a t-attf-class="fa fa-comment-o #{not answer.can_comment and 'karma_required text-muted' or ''}"
+		                                    t-attf-data-karma="#{not answer.can_comment and answer.karma_comment or 0}"
+		                                    style="cursor: pointer" t-att-data-toggle="answer.can_comment and 'collapse' or ''"
+		                                    t-attf-data-target="#comment#{ answer._name.replace('.','') + '-' + str(answer.id) }"> Comentar
+		                                </a>
+		                            </li>
+		                            <li>
+		                                <t t-call="website_forum.link_button">
+		                                    <t t-set="url" t-value="'/forum/' + slug(forum) + '/post/' + slug(answer) + '/edit'"/>
+		                                    <t t-set="label" t-value="'Editar'"/>
+		                                    <t t-set="classes" t-value="'fa fa-edit'"/>
+		                                    <t t-set="karma" t-value="not answer.can_edit and answer.karma_edit or 0"/>
+		                                </t>
+		                            </li>
+		                            <li>
+		                                <t t-call="website_forum.link_button">
+		                                    <t t-set="url" t-value="'/forum/' + slug(forum) + '/post/' + slug(answer) + '/delete'"/>
+		                                    <t t-set="label" t-value="'Borrar'"/>
+		                                    <t t-set="classes" t-value="'fa-trash-o'"/>
+		                                    <t t-set="karma" t-value="not answer.can_unlink and answer.karma_unlink or 0"/>
+		                                </t>
+		                            </li>
+		                            <li>
+		                                <t t-call="website_forum.link_button">
+		                                    <t t-set="url" t-value="'/forum/' + slug(forum) + '/post/' + slug(answer) + '/convert_to_comment'"/>
+		                                    <t t-set="label" t-value="'Convertir en comentario'"/>
+		                                    <t t-set="classes" t-value="'fa-magic'"/>
+		                                    <t t-set="karma" t-value="not answer.can_comment_convert and answer.karma_comment_convert or 0"/>
+		                                </t>
+		                            </li>
+				            	</ul>
+				        	</div>
+				        </div>
+				        <div class="row">
+				        	<div class="col-md-12 col-xs-12">
+					        	<t t-call="website_forum.post_comment">
+			                 		<t t-set="object" t-value="answer"/>
+			              		</t>
+			              	</div>
+		              	</div>
+				 	</div>
+		        </div>
+
+		        <div t-if="not question.uid_has_answered">
+		            <t t-call="aloxa_sevigal_website.post_answer"/>
+		        </div>
+		        <div t-if="question.uid_has_answered" class="mb16">
+		            <a class="btn btn-primary col-xs-12 col-md-3" t-attf-href="/forum/#{slug(forum)}/question/#{slug(question)}/edit_answer">Edita tu última respuesta</a>
+		            <br/>
+		            <i class="text-muted">(solo se permite una respuesta por pregunta)</i>
+		        </div>
+		    </t>
+		</template>
+		<!-- FIN: DETALLE MENSAJE -->
+		
+		<!-- CERRAR PREGUNTA -->
+		<template id="close_question" name="Cerrar Pregunta">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		    	<div id="block-section-header" class="block-sevigal bg-default">
+					<h1 class="mt0">Cerrar Pregunta</h1>
+			        <p class="text-muted">
+			        	Si cierras una pregunta, está se ocultará. 
+			        	Solo los administradores podrán seguir viéndola.
+			        </p>
+		    	</div>
+		    	
+		        <form t-attf-action="/forum/#{ slug(forum) }/question/#{slug(question)}/close" method="post" role="form" class="form-horizontal mt32 mb64">
+		            <input name="post_id" t-att-value="question.id" type="hidden"/>
+		            <div class="block-sevigal-simple bg-default">
+			            <div class="form-group">
+			                <label class="col-md-3 control-label" for="reason">Pregunta:</label>
+			                <div class="col-md-8 mt8">
+			                    <span t-field="question.name"/>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-md-3 control-label" for="reason">Motivo:</label>
+			                <div class="col-md-8">
+			                    <select class="form-control" name="reason_id">
+			                        <t t-foreach="reasons or []" t-as="reason">
+			                            <option t-att-value="reason.id" t-att-selected="reason.id == question.closed_reason_id.id"><t t-esc="reason.name"/></option>
+			                        </t>
+			                    </select>
+			                </div>
+			            </div>
+		            </div>
+		            <div class="row">
+		          	 	<div class="col-md-12 col-xs-12">
+	                    	<button class="btn btn-primary col-md-2 col-xs-12">Cerrar Pregunta</button>
+	                    	&amp;nbsp;<span class="text-muted">ó</span>&amp;nbsp;
+	                    	<a class="btn btn-link" t-attf-href="/forum/#{ slug(forum) }/question/#{ slug(question) }">Regresar a la Pregunta</a>
+		            	</div>
+		            </div>
+		        </form>
+		    </t>
+		</template>
+		<!-- FIN: CERRAR PREGUNTA -->
+		
+		<!-- TEMPLATE VACIO -->
+		<template id="empty-forum">
+		   	<t t-call="website.layout">
+		        <t t-set="head">
+		            <script type="text/javascript" src="/web/static/lib/ckeditor/ckeditor.js"/>
+		            <script type="text/javascript">
+		                CKEDITOR.config.toolbar = [['Bold','Italic','Underline','Strike'],['NumberedList','BulletedList', 'Blockquote']
+		                ,['Outdent','Indent','Link','Unlink','Image'],] ;
+		            </script>
+		            <script type='text/javascript' src='/aloxa_sevigal_website/static/lib/bootbox.min.js' />
+		        </t>
+
+		        <div id="wrap" class="container">
+	            	<t t-raw="0"/>
+		   		</div>
+   	 		</t>
+		</template>
+		<!-- FIN: TEMPLATE VACIO -->
+		
+		<!-- CONTENIDO PAGINAS -->
+		<template id="page_index" name="Panel">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+				<t t-set="str_ask" t-value="False" />
+				<t t-if="header.get('type') == 'Reunion'">
+					<t t-set="url_ask" t-value="'/servicios/reuniones/preguntar'" />
+					<t t-set="str_ask" t-value="'Solicitar Presupuesto'" />
+				</t>
+				<t t-if="header.get('type') == 'Viaje'">
+					<t t-set="url_ask" t-value="'/servicios/viajes/preguntar'" />
+					<t t-set="str_ask" t-value="'Solicitar Presupuesto'" />
+				</t>
+				<t t-if="header.get('type') == 'Mensaje'">
+					<t t-set="url_ask" t-value="'/mensajes/preguntar'" />
+					<t t-set="str_ask" t-value="'Enviar Mensaje'" />
+				</t>
+				
+				<t t-if="str_ask and not header.get('ask_hide')">
+					<div class="col-md-3 visible-xs" id="right-column">
+		                <a t-attf-class="btn btn-primary btn-lg btn-block mb16"
+		                   t-attf-href="#{url_ask}"
+		                   t-attf-data-karma="0">
+		                   <i class="fa fa-send"></i>
+		                   <t t-esc="str_ask" />
+		                </a>
+		        	</div>
+                </t>
+		    
+		    	<div class="col-md-9">
+		    		<div id="block-section-header" class="block-sevigal bg-default">
+				        <h1 class="mt0">
+				            <t t-esc="question_count+question_count_unread"/>
+				            <span t-if="header.get('type') == 'Notificacion'">Alerta(s)</span>
+							<span t-if="header.get('type') == 'Reunion'">Reunion(es)</span>
+							<span t-if="header.get('type') == 'Viaje'">Viaje(s)</span>
+							<span t-if="header.get('type') == 'Mensaje'">Mensaje(s)</span>
+						</h1>
+						<h3 class="mt0">
+							<small t-if="len(search) > 0">
+								<i>&amp;quot;<t t-esc="search"/>&amp;quot;</i>
+							</small>
+				            <small class="dropdown" t-if="filters in ('all', 'unanswered','followed', 'tag', 'unread', 'archived')">
+				              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				                  <t t-if="filters == 'all'">Todo</t>
+				                  <t t-if="filters == 'unanswered'">Sin Responder</t>
+				                  <t t-if="filters == 'followed'">Seguido</t>
+				                  <t t-if="filters == 'unread'">Sin Leer</t>
+				                  <t t-if="filters == 'archived'">Archivados</t>
+				                  <t t-if="tag"><span t-field="tag.name"/></t>
+				                  <t t-if="sorting == 'date'"> por Fecha de Actividad</t>
+				                  <t t-if="sorting == 'creation'"> por Fecha de Creación</t>
+				                  <t t-if="sorting == 'answered'"> por Más Respondido</t>
+				                  <!-- t t-if="sorting == 'vote'"> por Más Votado</t -->
+				                  <b class="caret"/>
+				              </a>
+				              <ul class="dropdown-menu">
+				                  <li class="dropdown-header">Filtro activo</li>
+				                  <li t-att-class="filters == 'all' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'sorting', filters='all')">Todo</a>
+				                  </li>
+				                  <li t-att-class="filters == 'unread' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'sorting', filters='unread')">Sin Leer</a>
+				                  </li>
+				                  <li t-att-class="filters == 'unanswered' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'sorting', filters='unanswered')">Sin Respuesta</a>
+				                  </li>
+				                  <li t-if="uid" t-att-class="filters == 'followed' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'sorting', filters='followed')">Seguidos</a>
+				                  </li>
+				                  <li t-att-class="filters == 'archived' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'sorting', filters='archived')">Archivados</a>
+				                  </li>
+				                  <li class="dropdown-header">Etiquetas</li>
+				                  <li t-if="tag" t-att-class="tag and 'active' or '' ">
+				                      <a href=""><t t-esc="tag.name"/></a>
+				                  </li>
+				                  <li class="dropdown-header">Ordenado por</li>
+				                  <li t-att-class="sorting == 'date' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'filters', sorting='date')">Fecha de actividad</a>
+				                  </li>
+				                  <li t-att-class="sorting == 'creation' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'filters', sorting='creation')">Fecha de creación</a>
+				                  </li>
+				                  <li t-att-class="sorting == 'answered' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'filters', sorting='answered')">Mas respondidos</a>
+				                  </li>
+				                  <!-- li t-att-class="sorting == 'vote' and 'active' or '' ">
+				                      <a t-att-href="url_for('') + '?' + keep_query( 'search', 'filters', sorting='vote')">Mas votados</a>
+				                  </li -->
+				              </ul>
+				            </small>
+				        </h3>
+			        </div>
+			        
+					<div class="subblock-sevigal bg-default clearfix" t-if="question_ids">
+				     	<div t-foreach="question_ids" t-as="question" class="">
+			            	<t t-call="aloxa_sevigal_website.display_post"/>
+			       	 	</div>
+					</div>
+			  		<t t-call="website.pager"/>
+				</div>
+			
+				<t t-if="str_ask and not header.get('ask_hide')">
+					<div class="col-md-3 hidden-xs" id="right-column">
+		                <a class="btn btn-primary btn-lg btn-block mb16"
+		                   t-attf-href="#{url_ask}"
+		                   data-karma="0"
+		                   style="margin-top: 0.5em">
+		                   <i class="fa fa-send"></i>
+		                   <t t-esc="str_ask" />
+		                </a>
+		        	</div>
+                </t>
+		    </t>
+		</template>
+		<!-- FIN: CONTENIDO PAGINAS -->
+		
+		
+		<!-- LISTA MENSAJES -->
+		<template id="display_post">
+			<a class="sevigal-message-link" t-attf-href="/mensaje/#{ slug(question) }">
+			    <div t-attf-class="sevigal-message-row clearfix col-md-12 {{question.views == 0 and 'bg-warning sevigal-message-row-unread' or ''}}">
+			        <div class="col-md-2 hidden-xs text-center">
+			            <div t-attf-class="sevigal-box #{question.is_correct and 'oe_green' or 'oe_grey'} #{(question.child_count == 0) and 'text-muted' or ''}">
+			                <span t-esc="question.child_count"/>
+			                <div t-if="not question.child_count==1" class="subtitle">Respuestas</div>
+			                <div t-if="question.child_count==1" class="subtitle">Respuesta</div>
+			            </div>
+			        </div>
+			        <div class="col-xs-12 col-md-10 clearfix" style="min-height:2.5em;">
+			            <div class="sevigal-message-title" t-attf-style="{{question.views == 0 and 'font-weight:bold' or ''}}">
+			            	<t t-if="question.name">
+			                	<span t-field="question.name"/>
+			                </t>
+			            	<t t-if="not question.name">
+			                	Sin Título
+			            	</t>
+			                <span t-if="not question.active"><b> [Borrado]</b></span>
+			                <span t-if="question.state == 'close'"><b> [Cerrado]</b></span>
+			            </div>
+			        </div>
+			        <div class="col-xs-12 col-md-10">
+			     		<table class="sevigal-message-info text-muted">
+				            <tr>
+				            	<td>
+				            		<span class="visible-xs">
+							            <small t-esc="question.child_count"/>
+							            <small t-if="not question.child_count==1"> Respuestas</small>
+						                <small t-if="question.child_count==1"> Respuesta</small>
+						            </span>
+						         	<span class="visible-lg">
+						            	<t t-foreach="question.tag_ids" t-as="question_tag">
+						                    <span t-attf-class="pull-right badge #{tag and tag.name == question_tag.name and 'badge-active' ''}" t-field="question_tag.name"
+						                        style="margin-right: 4px;"/>
+							            </t>
+						            </span>
+					        	</td>
+						        <td>
+					            	<small class="pull-right">
+					            		<i class="fa fa-calendar"></i> <span t-field="question.write_date" t-field-options='{"format":"short"}'/>
+					            	</small>
+				            	</td>
+			            	</tr>
+			            </table>
+			        </div>
+			    </div>
+		    </a>
+		</template>
+		<!-- FIN: LISTA MENSAJES -->
+		
+		<!-- CALENDARIO -->
+		<template id="calendario" name="Calendario">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		        <div class="row mt16">
+		        	<div id="calendar"></div>
+					<div class="modal fade" id="modalCalendarNewEvent" tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header">
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+					        		<h4 class="modal-title" id="exampleModalLabel">Nuevo Evento</h4>
+					      		</div>
+					      		<div class="modal-body">
+									<form>
+										<div class="row">
+								        	<div class="form-group col-md-6">
+								            	<label for="event-starts" class="control-label">Desde:</label>
+								            	<input type="text" class="form-control" id="event-starts" />
+								          	</div>
+								          	<div class="form-group col-md-6">
+								            	<label for="event-ends" class="control-label">Hasta:</label>
+								            	<input type="text" class="form-control" id="event-ends" />
+								            	<input type="checkbox" id="event-allday" value="Todo el día" /> Todo el día
+								          	</div>
+							          	</div>
+							          	<div class="form-group">
+							            	<label for="message-text" class="control-label">Nombre Evento:</label>
+							            	<input type="text" class="form-control" id="event-name" autofocus="true" />
+							          	</div>
+							        </form>
+					     		</div>
+					      		<div class="modal-footer">
+					      			<button type="button" id="event-delete" class="btn" style="margin-right: 15px">Borrar</button>
+					        		<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					        		<button type="button" class="btn btn-primary">Crear</button>
+					      		</div>
+					      	</div>
+					    </div>
+					</div>
+		        </div>  	   
+		    </t>
+
+		    <link rel='stylesheet' href='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/fullcalendar.css' type="text/css"/>
+		    <link rel="stylesheet" href="/aloxa_sevigal_website/static/src/css/jquery.simple-dtpicker.css" type="text/css" />
+			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/lib/moment.min.js' />
+			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/fullcalendar.min.js' />
+			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/lang/es.js' />
+			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/jquery.simple-dtpicker.js' />
+			<script type='text/javascript' src='/aloxa_sevigal_website/static/src/js/standart_calendar.js' />
+		</template>
+		<!-- FIN: CALENDARIO -->
+		
+		<!-- DISPLAY POST ANSWER -->
+		<template id="display_post_answer">
+		    <div class="clearfix">
+		        <!-- div t-attf-class="pull-left text-center mb16 box #{len(answer.vote_ids) and 'oe_green' or 'oe_grey'}">
+		            <div t-esc="len(answer.vote_ids)"/>
+		        </div -->
+		        <div class="question-name" style="margin-left: 32px;">
+		            <a style="font-size: 15px;" t-attf-href="/mensaje/#{ answer.parent_id.id }/#answer-#{ answer.id }" t-esc="answer.parent_id.name"/>
+		            <t t-if="len(answer.website_message_ids)&gt;0">
+		                (<t t-esc="len(answer.website_message_ids)"/>
+		                <t t-if="len(answer.website_message_ids)&gt;1">Comments</t>
+		                <t t-if="len(answer.website_message_ids)&lt;=1">Comment</t>)
+		            </t>
+		        </div>
+		    </div>
+		</template>
+		<!-- FIN: DISPLAY POST ANSWER -->
+		
+		<!-- INFORMACION -->
+		<template id="info" name="Información">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		    	<div id="block-section-header" class="block-sevigal bg-default">
+		    		<div class="row">
+		    			<table class="col-xs-12 col-md-12">
+		    				<tr>
+		    					<td class="text-center" style="width:90px;">
+		    						<span t-field="user.partner_id.image_small" t-field-options='{"widget": "image", "class": "img img-responsive img-thumbnail"}' />
+		    					</td>
+		    					<td class="text-left" style="vertical-align:top;">
+									<h4 style="margin-bottom:0;"><strong t-esc="user.name" /></h4>
+									<small t-esc="user.login" />
+		    					</td>
+		    				</tr>
+		    			</table>
+					</div>
+				</div>
+				
+		    	<div class="block-sevigal-simple bg-default">
+		    		<h3 class="mt0"><i class="fa fa-lg fa-phone"></i> Teléfonos</h3>
+					<table class="table table-condensed table-hover table-striped">
+						<thead>
+							<th></th>
+							<th></th>
+							<th></th>
+						</thead>
+						<tbody id="table-phones">
+							<t t-if="phones" t-foreach="phones" t-as="phone_lines">
+								<t t-foreach="phone_lines" t-as="phone_line">
+									<t t-set="contact_id" t-value="'contact-%d' % (phone_line.id)" />
+									<tr t-attf-id="#{contact_id}">
+										<td><t t-esc="phone_line.numero" /></td>
+										<td><t t-esc="phone_line.descripcion" /></td>
+										<td class="text-right">
+											<a class="remove-contact btn btn-xs" t-attf-data-id="#{phone_line.id}" href="#" title="Borrar Contacto"><i class="fa fa-remove"></i></a>
+										</td>
+									</tr>
+								</t>
+							</t>
+						</tbody>
+					</table>
+					<div class="text-right"><a href="#" class="btn btn-link" data-toggle="modal" data-target="#modalNewPhoneNumber"><i class="fa fa-plus"></i> Añadir Nuevo</a></div>
+		    	</div>
+		    
+		    	<div class="block-sevigal-simple bg-default">
+		       		<ul class="nav nav-pills">
+			            <li>
+			                <a href="#answers" data-toggle="tab"><t t-esc="count_answers"/> Respuestas</a>
+			            </li>
+			            <li>
+			                <a href="#favourite_question" data-toggle="tab"><t t-esc="len(favourite)"/> Archivados</a>
+			            </li>
+			            <li>
+			                <a href="#activity" data-toggle="tab">Actividad</a>
+			            </li>
+		        	</ul>
+			        <div class="tab-content clearfix mt16">
+			            <div class="tab-pane" id="answers">
+			                <div t-foreach="answers" t-as="answer">
+			                    <t t-call="aloxa_sevigal_website.display_post_answer"/>
+			                </div>
+			            </div>
+			            <div class="tab-pane" id="favourite_question">
+			                <div t-foreach="favourite" t-as="question">
+			                    <t t-call="aloxa_sevigal_website.display_post"/>
+			                </div>
+			            </div>
+			            <div class="tab-pane" id="followed_question">
+			                <div t-foreach="followed" t-as="question" class="servigal-message-row mb16">
+			                    <t t-call="aloxa_sevigal_website.display_post"/>
+			                </div>
+			            </div>
+			            <div class="tab-pane" id="activity">
+		                	<table>
+		                		<thead>
+		                			<th></th>
+		                			<th></th>
+		                			<th></th>
+		                		</thead>
+		                		<tbody>
+		                			<tr t-foreach="activities" t-as="activity">
+		                				<td class="text-left" style="padding: 0 0.2em;">
+		                					<span t-field="activity.date" t-field-options='{"format": "short"}'/>
+		                				</td>
+		                				<td class="text-left" style="padding: 0 0.2em;">
+		                					<span t-esc="activity.subtype_id.name" class="label label-info"/>
+		                				</td>
+		                				<td class="text-left" style="padding: 0 0.2em;">
+		                					<t t-set="post" t-value="posts[activity.res_id]"/>
+					                        <span t-if="post[1]">
+					                            <a t-attf-href="/mensaje/#{ slug(post[0]) }#answer-#{ str(post[1].id) }">
+					                            	<t t-if="post[0].name">
+					                                	<span t-esc="post[0].name"/>
+					                                </t>
+					                                <t t-if="not post[0].name">
+					                                	<span>Sin Título</span>
+					                                </t>
+					                            </a>
+					                        </span>
+					                        <span t-if="not post[1]">
+					                            <a t-attf-href="/mensaje/#{ slug(post[0]) }">
+					                            	<t t-if="post[0].name">
+					                                	<span t-esc="post[0].name"/>
+					                                </t>
+					                                <t t-if="not post[0].name">
+					                                	<span>Sin Título</span>
+					                                </t>
+					                            </a>
+					                        </span>
+		                				</td>
+		                			</tr>
+		                		</tbody>
+		                	</table>
+			            </div>
+			    	</div>
+		        </div>
+		        
+				<div class="modal fade" id="modalNewPhoneNumber" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<form id="ncontact" class="form-inline" style="margin-bottom:1em;">
+					    	<div class="modal-content">
+					      		<div class="modal-header">
+					        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+					        		<h4 class="modal-title" id="exampleModalLabel">Nuevo Número de Teléfono</h4>
+					      		</div>
+					      		<div class="modal-body">
+					      			<label for="nphone">Teléfono:</label>
+								    <input type="tel" class="form-control" id="nphone" name="nphone" placeholder="Teléfono" />
+								    <label for="nphone">Descripción:</label>
+								    <input type="text" class="form-control" id="ndesc" name="ndesc" placeholder="Descripción" />
+					     		</div>
+					      		<div class="modal-footer">
+					        		<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					        		<button type="submit" class="btn btn-primary">Crear</button>
+					      		</div>
+					      	</div>
+				      	</form>
+				    </div>
+				</div>
+		    </t>
+		</template>
+		<!-- FIN: INFORMACION -->
+		
+		<!-- DETALLE FACTURA -->
+		<template id="invoice_detail" name="Factura">
+			<div t-if="recurring" style="margin-bottom: 2em;" class="block-sevigal-simple bg-info">
+				<strong><i class="fa fa-info"></i> Fecha expedición de factura:</strong> <span t-esc="next_date" />
+			</div>
+
+			<div id="lines" class="block-sevigal-simple-ns bg-default">
+				<t t-foreach="invoice_lines" t-as="line">
+					<t t-if="line.pack_line">
+						<div class="line-section">
+							<small><i class="fa fa-chevron-right"></i> [Pack] <strong t-esc="line.name" /> <i t-esc="'x%d' % line.quantity" /></small>
+						</div>
+				  	   
+				  	   	<div class="line-section-detail">
+				  			<t t-foreach="line.pack_line_consumido_ids" t-as="product">
+				  				<div class="text-muted"><small><span t-esc="product.product_id.name" /> <i t-esc="'(%d de %d)' % (product.consumido,product.disponible)" /></small></div>
+								<div class="progress">
+									<div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" t-att-aria-valuenow="int(product.consumido)" aria-valuemin="0" t-att-aria-valuemax="int(product.disponible)">
+								    	<span class="sr-only"><span t-esc="'%d de %d' % (product.consumido,product.disponible)" /></span>
+								  	</div>
+								</div>
+				  			</t>
+			  			</div>
+					</t>
+					<t t-if="not line.pack_line">
+						<div class="line-section">
+							<small><i class="fa fa-chevron-right"></i> <span t-esc="'[%s]' % (line.product_id.tipo_producto_servicio or line.product_id.tipo_producto_pack)" /> <strong t-esc="line.name" /> <i t-esc="'x%d' % line.quantity" /></small>
+						</div>
+					</t>
+				</t>
+			</div>
+		</template>
+		<!-- FIN: DETALLE FACTURA -->
+		
+		<!-- FACTURAS -->
+		<template id="facturas" name="Facturas">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		    	<div id="block-section-header" class="block-sevigal bg-default">
+		    		<h1 class="mt0">
+		    			Facturas
+		    		</h1>
+			        <ul class="nav nav-pills">
+			            <li class="active"><a href="#current" data-toggle="tab">En Curso</a></li>
+			            <li><a href="#history" data-toggle="tab"><t t-esc="count_questions"/> Historial</a></li>
+			        </ul>
+		        </div>
+		        <div class="tab-content mt16">
+		            <div class="tab-pane active" id="current">
+		            	<t t-call="aloxa_sevigal_website.invoice_detail" />
+		            </div>
+		            <div class="tab-pane" id="history">
+		            	<t t-if="not history_lines">
+		            		<h1 class="text-center text-muted" style="margin-top:2.5em;">No se han encontrado facturas antiguas</h1>
+		            	</t>
+		            	<div t-if="history_lines" class="subblock-sevigal bg-default">
+		            		<t t-foreach="history_lines" t-as="history_line">
+			            		<a t-attf-href="/factura/descargar?id=#{history_line.id}">
+				    				<div t-attf-class="sevigal-message-row clearfix">
+				    					<span title="Número Factura" t-esc="history_line.number" class="col-md-12 col-xs-12 text-big"/>
+				    					<div class="col-md-12 col-xs-12 text-right text-muted">
+				    						(<span title="Subtotal" t-esc="history_line.amount_untaxed" widget="monetary"/>&amp;euro;)
+				    						<span title="Total" class="text-big"><span t-esc="history_line.amount_total" widget="monetary"/>&amp;euro;</span>
+				    					</div>
+				    					<span class="col-md-12 col-xs-12 text-muted">
+				    						<table class="col-md-12 col-xs-12">
+				    							<tr>
+				    								<td title="Fecha Factura">
+				    									<i class="fa fa-lg fa-calendar"></i> <t t-esc="history_line.date_invoice" />
+				    								</td>
+				    								<td class="text-right" title="Fecha Vencimiento">
+				    									<span class="fa-stack fa-lg">
+															<i class="fa fa-calendar fa-stack-1x"></i>
+															<i class="fa fa-ban fa-stack-2x text-danger"></i>
+														</span>
+														<t t-esc="history_line.date_due" />
+				    								</td>
+				    							</tr>
+				    						</table>
+				    					</span>
+									</div>
+								</a>
+							</t>
+						</div>
+		            </div>
+		        </div>   
+		    </t>
+		</template>
+		<!-- FIN: FACTURAS -->
+		
+		<!-- PREGUNTAR -->
+		<template id="ask_question" name="Realizar una pregunta">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		        <div id="block-section-header" class="block-sevigal bg-default">
+		    		<h1 class="mt0">
+		    			Realizar Pregunta
+		    		</h1>
+		        </div>
+		        
+		        <form t-attf-action="#{header.get('url_ask')}" method="post" role="form" class="tag_text">
+		        	<div id="box-cke" class="block-sevigal-simple bg-default flat-controls">
+			            <input type="text" name="question_name" required="True" t-attf-value="#{question_name}"
+			                class="form-control" placeholder="¿Cuál es su pregunta?"/>
+			            <input type="hidden" name="karma" t-attf-value="#{user.karma}" id="karma"/>
+			            <input type="hidden" name="karma_retag" t-attf-value="#{forum.karma_retag}" id="karma_retag"/>
+			            <textarea name="content" required="True" class="form-control load_editor_sevigal">
+			                <t t-esc="question_content"/>
+			            </textarea>
+			            <input type="hidden" name="tag_type" value="select2"/>
+			            <input type="hidden" name="question_tags" placeholder="Tags" class="form-control js_select2"/>
+		            </div>
+		            <button t-attf-class="btn btn-primary col-xs-12 col-md-2 #{(user.karma &lt; forum.karma_ask) and 'karma_required' or ''}"
+		                id="btn_ask_your_question" t-att-data-karma="forum.karma_ask">Enviar Pregunta</button>
+		        </form>
+		        <script type="text/javascript">
+		            CKEDITOR.replace("content");
+		        </script>
+		    </t>
+		</template>
+		<!-- FIN: PREGUNTAR -->
+		
+		<!-- EDITAR PREGUNTA -->
+		<template id="edit_post" name="Editar Pregunta/Respuesta">
+		    <t t-call="aloxa_sevigal_website.empty-forum">
+		    	<div id="block-section-header" class="block-sevigal bg-default">
+		    		<h1 t-if="not is_answer" class="mt0">
+		    			Editar Pregunta
+		    		</h1>
+		    		<h1 t-if="is_answer" class="mt0">
+		    			Editar Respuesta
+		    		</h1>
+		        </div>
+
+		        <form t-attf-action="/forum/#{slug(forum)}/post/#{slug(post)}/save" method="post" role="form" class="tag_text">
+		            <div id="box-cke" class="block-sevigal-simple bg-default flat-controls">
+			            <div t-if="not is_answer">
+			                <input type="text" name="question_name" id="question_name" required="True"
+			                    t-attf-value="#{post.name}" class="form-control" placeholder="Editar tu Pregunta"/>
+			            </div>
+			            <input type="hidden" name="karma" t-attf-value="#{user.karma}" id="karma"/>
+			            <input type="hidden" name="karma_retag" t-attf-value="#{forum.karma_retag}" id="karma_retag"/>
+			            <textarea name="content" required="True" class="form-control load_editor_sevigal">
+			                <t t-esc="post.content"/>
+			            </textarea>
+			            <div t-if="not is_answer" class="row">
+			            	<div class="col-xs-12 col-md-12" style="margin-top: 0.5em;">
+			               		<input type="hidden" name="tag_type" value="select2"/>
+			               	 	<input type="hidden" name="question_tag" class="form-control col-md-9 js_select2" placeholder="Tags" value="see data init value" t-attf-data-init-value="#{tags}"/>
+			            	</div>
+			            </div>
+		            </div>
+		            <button class="btn btn-primary btn-lg col-md-2 col-xs-12">Guardar</button>
+		        </form>
+		        <script type="text/javascript">
+		            CKEDITOR.replace("content");
+		        </script>
+		    </t>
+		</template>
+		<!-- FIN EDITAR PREGUNTA -->
+		
+	</data>
+</openerp>

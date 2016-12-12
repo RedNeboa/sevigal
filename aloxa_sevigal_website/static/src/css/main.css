@@ -1,0 +1,341 @@
+.ui-datepicker {
+    z-index: 9999999999 !important;
+}
+
+/*.login {
+	margin-top: 70px;
+}*/
+
+#right-column .panel,
+footer {
+  display: none !important;
+}
+
+#oe_main_menu_navbar,
+#website-top-navbar {
+  margin-top:50px;
+}
+
+#wrapwrap {
+  display: block !important;
+}
+
+header, main {
+  display: inline !important;
+}
+
+body {
+  height: initial !important;
+  margin-bottom: 1.5em;
+  background: #eee url(/web/static/src/img/form_sheetbg.png);
+}
+
+
+@keyframes bell {
+    0%   {color: rgb(185,0,0); transform: rotate(0deg); transform-origin: 50% 0%;}
+    3%  {color: rgb(185,0,0); transform: rotate(-25deg); transform-origin: 50% 0%;}
+    6%  {color: rgb(185,0,0); transform: rotate(25deg); transform-origin: 50% 0%;}
+    9%  {color: rgb(185,0,0); transform: rotate(-25deg); transform-origin: 50% 0%;}
+    12%  {color: rgb(185,0,0); transform: rotate(25deg); transform-origin: 50% 0%;}
+    15%  {color: rgb(185,0,0); transform: rotate(-25deg); transform-origin: 50% 0%;}
+    20% {color: rgb(255,255,255); transform: rotate(0deg); transform-origin: 50% 0%;}
+}
+@-webkit-keyframes bell {
+    0%   {color: rgb(185,0,0); -webkit-transform: rotate(0deg); -webkit-transform-origin: 50% 0%;}
+    3%  {color: rgb(185,0,0); -webkit-transform: rotate(-25deg); -webkit-transform-origin: 50% 0%;}
+    6%  {color: rgb(185,0,0); -webkit-transform: rotate(25deg); -webkit-transform-origin: 50% 0%;}
+    9%  {color: rgb(185,0,0); -webkit-transform: rotate(-25deg); -webkit-transform-origin: 50% 0%;}
+    12%  {color: rgb(185,0,0); -webkit-transform: rotate(25deg); -webkit-transform-origin: 50% 0%;}
+    15%  {color: rgb(185,0,0); -webkit-transform: rotate(-25deg); -webkit-transform-origin: 50% 0%;}
+    20% {color: rgb(255,255,255); -webkit-transform: rotate(0deg); -webkit-transform-origin: 50% 0%;}
+}
+.bell-anim {
+  -webkit-animation-name: bell;
+  -webkit-animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-name: bell;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+}
+
+#logout:hover {
+  background-color: rgba(255, 0, 0, 0.08);
+}
+
+.navbar-form {
+	padding: 0 !important;
+}
+
+/** NUEVO MENU **/
+/* adjust body when menu is open */
+body.slide-active {
+    overflow-x: hidden
+}
+/*first child of #page-content so it doesn't shift around*/
+.no-margin-top {
+    margin-top: 0px!important
+}
+/*wrap the entire page content but not nav inside this div if not a fixed top, don't add any top padding */
+#page-content {
+    position: relative;
+    padding-top: 0.5em;
+    margin-top: 50px; /* Se verá mal con administrador ya que es para corregir el espacio del menu de admin */
+    left: 0;
+}
+#page-content.slide-active {
+    padding-top: 0
+}
+
+/* put toggle bars on the left :: not using button */
+#slide-nav .navbar-toggle {
+    cursor: pointer;
+    position: relative;
+    line-height: 0;
+    float: left;
+    margin: 0;
+    width: 30px;
+    height: 40px;
+    padding: 10px 0 0 0;
+    border: 0;
+    background: transparent;
+}
+/* icon bar prettyup - optional */
+#slide-nav .navbar-toggle > .icon-bar {
+    width: 100%;
+    display: block;
+    height: 3px;
+    margin: 5px 0 0 0;
+}
+#slide-nav .navbar-toggle.slide-active .icon-bar {
+    background: orange
+}
+.navbar-header {
+    position: relative
+}
+/* un fix the navbar when active so that all the menu items are accessible */
+.navbar.navbar-fixed-top.slide-active {
+    position: relative
+}
+/* screw writing importants and shit, just stick it in max width since these classes are not shared between sizes */
+@media (max-width:767px) { 
+	#slide-nav .container {
+	    margin: 0!important;
+	    padding: 0!important;
+      height:100%;
+	}
+	#slide-nav .navbar-header {
+	    margin: 0 auto;
+	    padding: 0 15px;
+	}
+	#slide-nav .navbar.slide-active {
+	    position: absolute;
+	    width: 80%;
+	    top: -1px;
+	    z-index: 1000;
+	}
+	#slide-nav #slidemenu {
+	    background: #f7f7f7;
+	    left: -100%;
+	    width: 80%;
+	    min-width: 0;
+	    position: absolute;
+	    padding-left: 0;
+	    z-index: 2;
+	    top: -8px;
+	    margin: 0;
+	}
+	#slide-nav #slidemenu .navbar-nav {
+	    min-width: 0;
+	    width: 100%;
+	    margin: 0;
+	}
+	#slide-nav #slidemenu .navbar-nav .dropdown-menu li a {
+	    min-width: 0;
+	    width: 80%;
+	    white-space: normal;
+	}
+	#slide-nav {
+	    border-top: 0
+	}
+	#slide-nav.navbar-inverse #slidemenu {
+	    background: #333
+	}
+	/* this is behind the navigation but the navigation is not inside it so that the navigation is accessible and scrolls*/
+	#navbar-height-col {
+	    position: fixed;
+	    top: 0;
+	    height: 100%;
+      bottom:0;
+	    width: 80%;
+	    left: -80%;
+	    background: #f7f7f7;
+	}
+	#navbar-height-col.inverse {
+	    background: #333;
+	    z-index: 1;
+	    border: 0;
+	}
+	#slide-nav .navbar-form {
+	    width: 100%;
+	    margin: 8px 0;
+	    text-align: center;
+	    overflow: hidden;
+	    /*fast clearfixer*/
+	}
+	#slide-nav .navbar-form .form-control {
+	    text-align: center
+	}
+	#slide-nav .navbar-form .btn {
+	    width: 100%
+	}
+}
+@media (min-width:768px) { 
+	#page-content {
+	    left: 0!important
+	}
+	.navbar.navbar-fixed-top.slide-active {
+	    position: fixed
+	}
+	.navbar-header {
+	    left: 0!important
+	}
+}
+
+/** CALENDARIO **/
+.mobile-calendar-event {
+  border:1px solid gray; 
+  margin-bottom:5px;
+}
+.mobile-calendar-date {
+  margin-top:1.5em;
+}
+.mobile-calendar-title {
+  padding: 0.5em 0.8em;
+}
+#calendar {
+	padding-bottom: 50px;
+}
+#event-new-container {
+	position: fixed;
+	z-index: 999;
+	bottom: 0;
+	padding: 12px 0;
+	background-color: white;
+	width: 100%;
+	left: 0;
+}
+
+/** BOOTSTRAP THEME **/
+.progress {
+	margin-bottom: 10px !important;
+}
+.btn, .pagination, .nav-pills > li > a, .progress {
+	border-radius: 2px !important;
+}
+.pagination > li:first-child > a, .pagination > li:first-child > span {
+    border-top-left-radius: 2px !important;
+    border-bottom-left-radius: 2px !important;
+}
+
+.pagination > li:last-child > a, .pagination > li:last-child > span {
+    border-top-right-radius: 2px !important;
+    border-bottom-right-radius: 2px !important;
+}
+.bg-default {
+	background-color: white;
+}
+
+.flat-controls input[type='text'], .flat-controls textarea {
+	border: 1px solid gray;
+	border-width: 0 0 2px 0;
+	border-radius: 2px;
+	margin-bottom: 1em;
+}
+
+.flat-controls textarea {
+	min-height: 200px;
+}
+
+/** LOGIN **/
+.sevigal-login {
+	box-shadow: 1px 1px 2px #ccc;
+	padding: 0.5em 1em;
+	background-color: white;
+}
+
+/** SECCTIONES **/
+.block-sevigal {
+	border: 1px solid #455560;
+	box-shadow: 1px 1px 2px #ccc;
+	padding: 0.5em 1em;
+	margin: 0.5em 0;
+	border-width: 0 0 8px 0;
+}
+.block-sevigal ul, .block-sevigal-simple ul {
+	margin-bottom: 0 !important;
+}
+.block-sevigal-simple {
+	box-shadow: 1px 1px 2px #ccc;
+	padding: 0.5em 1em;
+	margin: 0.5em 0;
+}
+.block-sevigal-simple-ns {
+	padding: 0.5em 1em;
+	margin: 0.5em 0;
+}
+.block-sevigal h3, .block-sevigal-simple h3 {
+	margin: 0.3em 0 0 0 !important;
+}
+.sevigal-message-title {
+	font-size: 125%;
+}
+.sevigal-message-row {
+	padding: 0.5em 0;
+	border: 1px solid #efefef;
+	border-width: 0 0 3px 0;
+}
+.sevigal-message-row-unread {
+	border-color: #DBC734;
+}
+.sevigal-message-row:hover {
+	background-color: #efefef;
+}
+.sevigal-message-info {
+	width: 100%;
+}
+.sevigal-box {
+	border-radius: 2px;
+	min-width: 80px;
+}
+.sevigal-box span {
+  font-size: 200%;
+  font-weight: bold;
+}
+.sevigal-box div.subtitle {
+  margin-top: -4px;
+}
+.subblock-sevigal {
+	margin-top: 1em;
+}
+
+/** FACTURAS **/
+.line-section-detail {
+	margin-left: 1em;
+}
+.line-section {
+	color: rgb(1, 71, 192);
+}
+.text-big {
+	font-size: 160%;
+	font-weight: bold;
+}
+
+/** ESCRIBIR PREGUNTA **/
+.load_editor_sevigal {
+	min-height: 200px;
+}
+
+/** DETALLE MENSAJE **/
+.sevigal-message-detail {
+	margin-top: 1em;
+}

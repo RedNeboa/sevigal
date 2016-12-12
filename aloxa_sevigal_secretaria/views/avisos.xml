@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+	<!-- TREE  avisos -->	
+    <record id="sevigal_aviso_tree" model="ir.ui.view">
+        <field name="name">Avisos Tree</field>
+        <field name="model">sevigal.aviso</field>        
+        <field name="arch" type="xml">        	
+       		<tree string="Avisos" editable="bottom">
+       			<field name="create_date"/>
+       			<field name="name"/>
+        		<field name="tipo"/>     		
+        		<field name="mensaje_id"/>        		
+        		<field name="event_id"/>
+        		<field name="leido"/>
+       		</tree>
+        </field>
+    </record>
+	<!-- SEARCH de avisos -->
+	<record model="ir.ui.view" id="sevigal_aviso_view_search">
+        <field name="name">Filtros de Avisos</field>
+        <field name="model">sevigal.aviso</field>
+        <field name="arch" type="xml">
+        	<search string="Buscar Aviso">     	
+	       		<filter name="no_leido" string="No Leído"
+	       				domain="[('leido','=',False)]"/>
+	       		<group expand="0" string="Group By">      	
+	       			<filter name="group_by_tipo" string="Tipo" domain="[]" context="{'group_by': 'tipo'}"/>
+	       		</group>
+       		</search> 
+		</field>
+	</record>
+	</data>
+</openerp>
