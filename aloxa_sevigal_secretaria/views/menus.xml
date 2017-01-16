@@ -75,6 +75,9 @@
 		      action="product.product_normal_action_sell"/>
 	<menuitem id="sevigal_empresa" name="Empresa"
 		      parent="sevigal_menu_config"
-		      action="base.action_res_company_form"/>		      	      
+		      action="base.action_res_company_form"/>
+	<menuitem id="sevigal_mail" name="Mail"
+		      parent="sevigal_menu_config"
+		      action="base.action_ir_mail_server_list"/>		      	      
 	</data>
 </openerp>
