@@ -16,16 +16,16 @@ import pytz
 import datetime
 import openerp.addons.web.controllers.main as webmain
 import logging
-from json.encoder import JSONEncoder
 _logger = logging.getLogger(__name__)
-    
+
+
 class SevigalWebsite(webmain.Home):
     _post_per_page = 10
     _user_per_page = 30
-    
-    def _login_redirect():
+
+    def _login_redirect(self):
         return http.redirect("/entrar")
-        
+
     def _get_notifications(self):
         cr, uid, context = request.cr, request.uid, request.context
         Message = request.registry['mail.message']
@@ -36,7 +36,7 @@ class SevigalWebsite(webmain.Home):
         else:
             msg = list()
         return msg
-    
+
     def _prepare_forum_values(self, forum=None, **kwargs):
         current_user = request.registry['res.users'].browse(request.cr, request.uid, request.uid, context=request.context)
         values = {
@@ -54,7 +54,7 @@ class SevigalWebsite(webmain.Home):
             values['forum'] = request.registry['forum.forum'].browse(request.cr, request.uid, kwargs.pop('forum_id'), context=request.context)
         values.update(kwargs)
         return values
-    
+
     @http.route('/web/login', type='http', auth="none")
     def web_login(self, redirect=None, **kw):
         webmain.ensure_db()
@@ -87,12 +87,12 @@ class SevigalWebsite(webmain.Home):
             # probably not an odoo compatible database
             error = 'Unable to login on database %s' % request.session.db
             return werkzeug.utils.redirect('/web/database/selector?error=%s' % error, 303)
-    
+
     @http.route('/', auth="user", type="http")
     def index(self, **post):
         if not request.session.uid:
-            return _login_redirect()
-        
+            return self._login_redirect()
+
         cr, uid, context = request.cr, request.uid, request.context
         User = request.registry['res.users']
         Post = request.registry['forum.post']
@@ -110,7 +110,7 @@ class SevigalWebsite(webmain.Home):
             partner_ids.append(user_child.partner_id.id)
 
         if not current_user.exists():
-            return _login_redirect()
+            return self._login_redirect()
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         values = self._prepare_forum_values(forum=forum, searches={}, header={'type':'Index'}, **post)
 
@@ -120,7 +120,7 @@ class SevigalWebsite(webmain.Home):
                 ('forum_id', '=', forum.id), 
                 ('create_uid', 'in', user_ids),
             ], order='create_date desc', context=context)
-        
+
         # Telefonos
         phones = []
         partners = request.env['res.partner'].search([('id', 'in', partner_ids)])
@@ -193,29 +193,29 @@ class SevigalWebsite(webmain.Home):
             'vote_post': vote_ids,
             'phones': phones
         })
-        
+
         return request.website.render("aloxa_sevigal_website.info", values)
-        
+
     @http.route(['/calendario'], auth="user", type='http', website=True)
     def forum_calendar(self, **post):
         if not request.session.uid:
-            return _login_redirect()
-        
+            return self._login_redirect()
+
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         values = self._prepare_forum_values(forum=forum, searches={}, header={'type':'Calendario'}, **post)
-        
+
         # FIXME: Deprecated: Usada esta forma por no encontrar otra mejor
         ua = request.httprequest.environ.get('HTTP_USER_AGENT', '').lower()
         if any(x in ua for x in ('android', 'iphone')):
             return request.website.render("aloxa_sevigal_website.calendario_mobile", values)
         else:
             return request.website.render("aloxa_sevigal_website.calendario", values)
-    
+
     @http.route(['/facturas'], auth="user", type='http', website=True)
     def facturas(self, **post):
         if not request.session.uid:
-            return _login_redirect()
-        
+            return self._login_redirect()
+
         cr, uid, context = request.cr, request.uid, request.context
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         User = request.registry['res.users']
@@ -224,7 +224,7 @@ class SevigalWebsite(webmain.Home):
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
-        
+
         # Current Invoice
         domain = [('partner_id','in',partner_ids),('state','=','open')]
         invoice = request.env['account.analytic.account'].search(domain, limit=1)
@@ -234,7 +234,7 @@ class SevigalWebsite(webmain.Home):
         # History
         domain = [('partner_id', 'in', partner_ids)]
         history_lines = request.env['account.invoice'].search(domain, order="date_invoice DESC")
-        
+
         values = self._prepare_forum_values(forum=forum, searches={}, header={'type':'Factura'}, **post)
         values.update({
             'invoice_lines':invoice_lines,
@@ -243,7 +243,7 @@ class SevigalWebsite(webmain.Home):
             'history_lines': history_lines,
         })
         return request.website.render("aloxa_sevigal_website.facturas", values)
-    
+
     @http.route(['/factura/descargar'], type='http', auth="user", methods=['GET'], website=True)
     def generate_invoice_report(self, id):
         if not request.session.uid:
@@ -256,7 +256,7 @@ class SevigalWebsite(webmain.Home):
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
-            
+
         domain = [('partner_id', 'in', partner_ids),('id', '=', id)]
         invoice = request.env['account.invoice'].search(domain, limit=1)
         if invoice:
@@ -266,7 +266,7 @@ class SevigalWebsite(webmain.Home):
                               ('Content-Disposition',
                                content_disposition('Factura-%s.pdf' % str(invoice.number)))])
         return request.redirect('/facturas')
-    
+
     @http.route(['/alertas/page/<int:page>',
                  '/servicios/reuniones/page/<int:page>',
                  '/servicios/viajes/page/<int:page>',
@@ -285,8 +285,8 @@ class SevigalWebsite(webmain.Home):
                  '/mensajes'], type='http', auth="user", website=True)
     def forum_page(self, tag=None, page=1, filters='all', sorting='date', search='', **post):
         if not request.session.uid:
-            return _login_redirect()
-        
+            return self._login_redirect()
+
         cr, uid, context = request.cr, request.uid, request.context
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         Post = request.registry['forum.post']
@@ -311,15 +311,15 @@ class SevigalWebsite(webmain.Home):
         else:
             post_type = "Notificacion"
             url = "/alertas"
-                
+
         if tag:
             url = "%s/tag/%s/mensajes" % (url, slug(tag))
-        
+
         if post_type == "Mensaje":
             domain = [('forum_id', '=', forum.id), ('parent_id', '=', False), ('state', '=', 'active'), ('create_uid','in',user_ids), ('tipo','=',post_type)]
         else:
             domain = [('forum_id', '=', forum.id), ('parent_id', '=', False), ('state', '=', 'active'), ('partner_id','in',partner_ids), ('tipo','=',post_type)]
-        
+
         if search:
             domain += ['|', ('name', 'ilike', search), ('content', 'ilike', search)]
         if tag:
@@ -397,7 +397,7 @@ class SevigalWebsite(webmain.Home):
             'search': search
         })
         return request.website.render("aloxa_sevigal_website.page_index", values)
-    
+
     @http.route(['''/mensaje/<model("forum.post", "[('forum_id','=',forum[0]),('parent_id','=',False)]"):question>'''], type='http', auth="user", website=True)
     def question(self, question, **post):
         cr, uid, context = request.cr, request.uid, request.context
@@ -408,16 +408,16 @@ class SevigalWebsite(webmain.Home):
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
-            
+
         # Hide posts from abusers (negative karma), except for moderators
-        user = request.env['res.users'].browse([uid])
+        #user = request.env['res.users'].browse([uid])
         if not current_user or not current_user.partner_id:
             raise werkzeug.exceptions.NotFound()
         if not question.can_view and not question.partner_id.id in partner_ids:
             raise werkzeug.exceptions.NotFound()
 
         forum = request.env['sevigal.opciones'].search([('nombre','=','Default')], limit=1).foro_notificaciones_id
-        
+
         # increment view counter
         request.registry['forum.post'].set_viewed(cr, SUPERUSER_ID, [question.id], context=context)
 
@@ -435,14 +435,14 @@ class SevigalWebsite(webmain.Home):
             'reversed': reversed,
         })
         return request.website.render("aloxa_sevigal_website.post_description_full", values)
-    
+
     @http.route(['/mensajes/preguntar',
                  '/servicios/reuniones/preguntar',
                  '/servicios/viajes/preguntar'], type='http', auth="user", website=True)
     def question_ask(self, **post):
         if not request.session.uid:
-            return _login_redirect()
-        
+            return self._login_redirect()
+
         if request.httprequest.path.startswith("/servicios/reuniones"):
             post_type = "Reunion"
             url_ask = '/servicios/reuniones/nuevo'
@@ -452,11 +452,11 @@ class SevigalWebsite(webmain.Home):
         else:
             post_type = "Mensaje"
             url_ask = '/mensajes/nuevo'
-            
+
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         values = self._prepare_forum_values(forum=forum, searches={}, header={'ask_hide': True, 'type': post_type, 'url_ask': url_ask})
         return request.website.render("aloxa_sevigal_website.ask_question", values)
-    
+
     @http.route(['/mensajes/nuevo',
                  '/servicios/reuniones/nuevo',
                  '/servicios/viajes/nuevo'], type='http', auth="user", methods=['POST'], website=True)
@@ -465,7 +465,7 @@ class SevigalWebsite(webmain.Home):
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
         Tag = request.registry['forum.tag']
         Forum = request.registry['forum.forum']
-        user = request.registry['res.users'].browse(cr, uid, uid, context=context)
+        #user = request.registry['res.users'].browse(cr, uid, uid, context=context)
         partner_id = request.env['res.users'].browse(uid).partner_id.id
         question_tag_ids = []
         tag_version = post.get('tag_type', 'texttext')
@@ -488,7 +488,7 @@ class SevigalWebsite(webmain.Home):
             post_type = "Viaje"
         elif request.httprequest.path.startswith("/mensajes"):
             post_type = "Mensaje"
-            
+
         # Crear Mensaje Foro
         new_question_id = request.registry['forum.post'].create(
             request.cr, request.uid, {
@@ -499,18 +499,18 @@ class SevigalWebsite(webmain.Home):
                 'tipo': post_type,
                 'partner_id': partner_id,
             }, context=context)
-        
+
         # Lanzar captura de mensajes
         request.env['sevigal.aviso'].sudo().obtener_eventos_mensajes()
-        
+
         return werkzeug.utils.redirect("/mensaje/%s" % new_question_id)
-    
+
     @http.route('/cerrar/pregunta/<model("forum.post"):question>', 
                 type='http', auth="user", methods=['POST'], website=True)
     def question_ask_for_close(self, question, **post):
         cr, uid, context = request.cr, request.uid, request.context
         forum = request.env['sevigal.opciones'].search([], limit=1).foro_notificaciones_id
-    
+
         Reason = request.registry['forum.post.reason']
         reason_ids = Reason.search(cr, uid, [], context=context)
         reasons = Reason.browse(cr, uid, reason_ids, context)
@@ -524,14 +524,13 @@ class SevigalWebsite(webmain.Home):
             'header': {'type': question.tipo, 'ask_hide':True},
         })
         return request.website.render("aloxa_sevigal_website.close_question", values)
-    
-    
-    ## JSON-RPC
+
+    # JSON-RPC
     @http.route(['/_remove_contact'], type='json', website=True)
     def remove_contact(self, id):
         if not request.session.uid:
             return {'error': 'anonymous_user'}
-        
+
         cr, uid, context = request.cr, request.uid, request.context
         User = request.registry['res.users']
         current_user = User.browse(cr, SUPERUSER_ID, uid, context=context)
@@ -539,25 +538,25 @@ class SevigalWebsite(webmain.Home):
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
-            
+
         phone_line = request.env['sevigal.telefono'].search([('id', '=', id),('partner_id', 'in', partner_ids)], limit=1)
         if phone_line:
             phone_line.unlink()
             return {'success': id}
         else:
             return {'error': 'invalid contact'}
-        
+
     @http.route(['/_add_contact'], type='json', website=True)
     def add_contact(self, phone, description=None):
         if not request.session.uid:
             return {'error': 'anonymous_user'}
-        
+
         cr, uid, context = request.cr, request.uid, request.context
         partner_id = request.env['res.users'].browse(uid).partner_id.id
         Model = request.session.model('sevigal.telefono')
         contact_id = Model.create({ 'partner_id':partner_id, 'numero':phone, 'descripcion':description }, request.context)
         return {'success': contact_id} if contact_id else {'error': 'invalid contact'}
-    
+
     @http.route(['/_get_unread_alerts_count'], type='json', website=True)
     def get_unread_alerts_count(self):
         if not request.session.uid:
@@ -572,14 +571,14 @@ class SevigalWebsite(webmain.Home):
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
-            
+
         domain = [('forum_id', '=', forum.id), ('parent_id', '=', False), ('state', '=', 'active'), ('partner_id','in',partner_ids), 
                   ('tipo','=','Notificacion'), ('views','=',0)]
         question_count = Post.search(cr, uid, domain, count=True, context=context)
         last_reg = Post.search(cr, uid, domain, limit=1, order='id desc', context=context)
 
         return {'num':question_count, 'last_id':last_reg[0] if last_reg else -1}
-        
+
     @http.route(['/calendario/get_events'], type='json', website=True)
     def calendario_get_events(self):
         if not request.session.uid:
@@ -597,7 +596,7 @@ class SevigalWebsite(webmain.Home):
         result = []
         for event in events:
             last_modif_user = request.env['res.users'].sudo().search([('partner_id', '=', event.message_ids[-1].author_id.id)])
-            result.append({                          
+            result.append({
                 'title': event.name,
                 'start': event.start,
                 'end': event.stop if not event.allday else None,
@@ -605,9 +604,9 @@ class SevigalWebsite(webmain.Home):
                 'id': event.id,
                 'color': "#31698A" if last_modif_user.has_group('aloxa_sevigal_secretaria.sevigal_user_group') else "#6DC066"
             })
-            
+
         return result
-        
+
     @http.route(['/calendario/uc_event'], type='json', website=True)
     def calendario_update_event(self, id, start, stop, allday, title):
         if not request.session.uid:
@@ -632,9 +631,9 @@ class SevigalWebsite(webmain.Home):
             event_id = Model.create({ 'stop':stop, 'start':start, 'allday':allday, 'name':title }, request.context)
             event = Model.browse(event_id)
             event.write({ 'partner_ids':[current_user.partner_id.id] })
-            
+
             return {'id': event_id}
-            
+
     @http.route(['/calendario/delete_event'], type='json', website=True)
     def calendario_delete_event(self, id):
         if not request.session.uid:
@@ -649,15 +648,17 @@ class SevigalWebsite(webmain.Home):
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
             user_ids.append(user_child.id)
-            
-        partner_id = request.env['res.users'].browse(request.uid).partner_id
-        event = request.env['calendar.event'].search([('id','=',id),'|',('user_id','in',user_ids),('partner_ids','in',partner_ids)], limit=1)
+
+        #partner_id = request.env['res.users'].browse(request.uid).partner_id
+        event = request.env['calendar.event'].search([
+                ('id', '=', id),
+                '|', ('user_id', 'in', user_ids),
+                ('partner_ids', 'in', partner_ids)
+            ], limit=1)
         event.unlink()
         return {}
-    
-    
-    
-    ## LAMBDA TELEMATICS: Entrada de datos
+
+    # LAMBDA TELEMATICS: Entrada de datos
     # Al no tener usuario se tiene que usar 'sudo()' para escalar permisos.
     #
     # ATRIBUTOS:
@@ -672,31 +673,31 @@ class SevigalWebsite(webmain.Home):
     #
     @http.route(['/registrar/llamada'], type='json', auth="none", jsonrpckey=True, cors='*')
     def register_call(self, did, src, dst, start, duration):
-        remote_addr = request.httprequest.remote_addr
+        #remote_addr = request.httprequest.remote_addr
         user_id = request.jsonrpckey['user']
-        
+
         # Imprimir Info Debug
         #_logger.info("[JSON-RPC][REGISTRAR/LLAMADA][%s] -- did: %s -- src: %s -- dst: %s -- start: %s -- duration: %s" %
         #             (remote_addr, did, src, dst, start, duration))
-        
+
         # Comprobar IP
         #if not remote_addr == '192.168.122.1':
         #    raise Exception('Dirección de origen no permitida')
-        
+
         # Omitir codigo de pais en el numero de telefono
         num_tlf = did[3:] if did[0] == '+' else did
-        
+
         # Buscar cliente asociado al numero de telefono
         client_id = request.env['res.partner'].sudo().search([('ref', '=', num_tlf)], limit=1)
         if not client_id:
             raise Exception('Cliente no encontrado')
-        
+
         # GMT a UTC (Se hace esta guarringada por que desde lambda no envian la fecha en UTC :|)
         local = pytz.timezone("Europe/Madrid");
         naive = datetime.datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
         local_dt = local.localize(naive, is_dst=None)
         utc_dt = local_dt.astimezone(pytz.utc)
-        
+
         # Registrar Llamada
         new_llam_reg = request.env['crm.phonecall'].sudo(user=user_id).create({
             'partner_id': client_id.id,
@@ -708,5 +709,5 @@ class SevigalWebsite(webmain.Home):
         })
         if not new_llam_reg:
             raise Exception('No se pudo guardar el registro')
-        
+
         return True
