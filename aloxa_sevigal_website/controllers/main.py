@@ -142,10 +142,10 @@ class SevigalWebsite(webmain.Home):
         user_answers = Post.browse(cr, uid, user_answer_ids[:post_display_limit], context=context)
 
         # showing questions which user following
-        obj_ids = Followers.search(cr, SUPERUSER_ID, [('res_model', '=', 'forum.post'), ('partner_id', 'in', partner_ids)], context=context)
-        post_ids = [follower.res_id for follower in Followers.browse(cr, SUPERUSER_ID, obj_ids, context=context)]
-        que_ids = Post.search(cr, uid, [('id', 'in', post_ids), ('forum_id', '=', forum.id), ('parent_id', '=', False)], context=context)
-        followed = Post.browse(cr, uid, que_ids, context=context)
+#         obj_ids = Followers.search(cr, SUPERUSER_ID, [('res_model', '=', 'forum.post'), ('partner_id', 'in', partner_ids)], context=context)
+#         post_ids = [follower.res_id for follower in Followers.browse(cr, SUPERUSER_ID, obj_ids, context=context)]
+#         que_ids = Post.search(cr, uid, [('id', 'in', post_ids), ('forum_id', '=', forum.id), ('parent_id', '=', False)], context=context)
+#         followed = Post.browse(cr, uid, que_ids, context=context)
 
         #showing Archived questions of user.
         fav_que_ids = Post.search(cr, uid, [('favourite_ids', '=', current_user.id), ('forum_id', '=', forum.id), ('parent_id', '=', False)], context=context)
@@ -184,7 +184,7 @@ class SevigalWebsite(webmain.Home):
             'searches': post,
             'answers': user_answers,
             'count_answers': count_user_answers,
-            'followed': followed,
+            #'followed': followed,
             'favourite': favourite,
             'up_votes': up_votes,
             'down_votes': down_votes,

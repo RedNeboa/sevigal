@@ -775,11 +775,11 @@
 			                    <t t-call="aloxa_sevigal_website.display_post"/>
 			                </div>
 			            </div>
-			            <div class="tab-pane" id="followed_question">
+			            <!--div class="tab-pane" id="followed_question">
 			                <div t-foreach="followed" t-as="question" class="servigal-message-row mb16">
 			                    <t t-call="aloxa_sevigal_website.display_post"/>
 			                </div>
-			            </div>
+			            </div-->
 			            <div class="tab-pane" id="activity">
 		                	<table>
 		                		<thead>
