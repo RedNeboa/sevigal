@@ -45,7 +45,8 @@
         'aloxa_sevigal_secretaria',
         'bus_enhanced',
         'web_auto_refresh',
-        'jsonrpc_keys'
+        'jsonrpc_keys',
+        'web_calendar',
     ],
 
     # always loaded

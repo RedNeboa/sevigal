@@ -58,9 +58,6 @@
 		        </div>  	   
 		    </t>
 
-			<link rel='stylesheet' href='/aloxa_sevigal_website/static/src/css/bootstrap-datetimepicker.min.css' type="text/css"/>
-			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/moment-2.9.0.js' />
-			<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/bootstrap-datetimepicker.min.js' />
 			<script type='text/javascript' src='/aloxa_sevigal_website/static/src/js/mobile_calendar.js' />
 		</template>
 		<!-- FIN: CALENDARIO -->

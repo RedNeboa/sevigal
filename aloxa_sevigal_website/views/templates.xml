@@ -5,7 +5,18 @@
 		<!-- ASSETS -->
 		<template id="assets_frontend" inherit_id="website.assets_frontend" name="website_sevigal_calendar assets">
 		    <xpath expr="." position="inside">
-		    	<link rel='stylesheet' href='/aloxa_sevigal_website/static/src/css/main.css' type="text/css"/>
+		    	<!-- Bootstrap Date Time Picker -->
+		    	<link rel='stylesheet' href='/aloxa_sevigal_website/static/src/css/bootstrap-datetimepicker.min.css' type="text/css"/>
+				<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/moment-2.9.0.js' />
+				<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/bootstrap-datetimepicker.min.js' />
+			
+				<!-- Full Calendar -->
+		    	<link rel='stylesheet' href='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/fullcalendar.css' type="text/css"/>
+				<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/fullcalendar.min.js' />
+				<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/fullcalendar-2.4.0/lang/es.js' />
+			
+				<!-- Varius -->
+		    	<link rel='stylesheet' href='/aloxa_sevigal_website/static/src/css/main.css' />
 		    	<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/bootbox.min.js' />
 		    	<script type='text/javascript' src='/aloxa_sevigal_website/static/lib/js_cookie.min.js' />
 		    	<script type='text/javascript' src='/aloxa_sevigal_website/static/src/js/main.js' />

@@ -38,7 +38,7 @@ openerp.website.if_dom_contains('#calendar', function(){
 				event.end = event.start;
 				event.end.add(1, 'days');
 			}
-			$modal.data('end_date', moment.utc(event.end));
+			$modal.data('end_date', event.end);
 			$modal.data('title', event.title);
 			$modal.data('allday', event.allDay);
 			$modal.data('id', event.id);
@@ -53,7 +53,7 @@ openerp.website.if_dom_contains('#calendar', function(){
 			
 			var diffdays = end_date.diff(start_date, 'day');
 			$modal = $('#modalCalendarNewEvent');
-			$modal.data('start_date', start_date);
+			$modal.data('start_date',start_date);
 			$modal.data('end_date', end_date);
 			$modal.data('allday', (!end_date.hasTime()&&diffdays==1));
 			$modal.data('title', '');
@@ -90,8 +90,8 @@ openerp.website.if_dom_contains('#calendar', function(){
 		is_new = (id===-1);
 		
 		$modal.find('#event-name').val(title);
-		$modal.find('#event-starts').handleDtpicker('setDate', start_date);
-		$modal.find('#event-ends').handleDtpicker('setDate', end_date);
+		$modal.find('#event-starts').data("DateTimePicker").date(start_date);
+		$modal.find('#event-ends').data("DateTimePicker").date(end_date);
 		$modal.find('#event-allday').prop('checked', allday);
 		
 		$modal.find('.modal-title').text(is_new?'Nuevo Evento':'Modificar Evento');
@@ -102,8 +102,8 @@ openerp.website.if_dom_contains('#calendar', function(){
 	$('#modalCalendarNewEvent .btn-primary').on('click', function(){
 		$modal = $('#modalCalendarNewEvent');
 		
-		start_date = moment.utc($modal.find('#event-starts').handleDtpicker('getDate'));
-		end_date = moment.utc($modal.find('#event-ends').handleDtpicker('getDate'));
+		start_date = $modal.find('#event-starts').data("DateTimePicker").date().utc();
+		end_date = $modal.find('#event-ends').data("DateTimePicker").date().utc();
 		title = $modal.find('input#event-name').val();
 		allday = $modal.find('input#event-allday').prop('checked');
 		id = $modal.data('id');
@@ -128,34 +128,17 @@ openerp.website.if_dom_contains('#calendar', function(){
 	});
 	
 	// DATE TIME PICKERS
-	var DTPickerOptions = {
-		'locale': 'es',
-	    'firstDayOfWeek': 1,
-	    'changeMonth': true,
-	    'changeYear': true,
-	    'futureOnly': true,
-	};
+	$('.date').datetimepicker({
+    	locale: 'es',
+    	useCurrent: false //Important! See issue #1075
+    });
 	
-	$('#event-starts').appendDtpicker($.extend({}, DTPickerOptions, { 'minDate': moment().utc() }));
-	$('#event-ends').appendDtpicker(DTPickerOptions);
-	
-	$('#event-ends').change(function() {
-		$('#event-starts').handleDtpicker('destroy');
-	    $('#event-starts').appendDtpicker($.extend({}, DTPickerOptions, {
-	    	'minDate': moment().utc(),
-		    'maxDate': moment.utc($('#event-ends').handleDtpicker('getDate'))
-	    }));
-	});
-
-	$('#event-starts').change(function() {
-		$('#event-ends').handleDtpicker('destroy');
-	    $('#event-ends').appendDtpicker($.extend({}, DTPickerOptions, {
-		    'minDate': moment.utc($('#event-starts').handleDtpicker('getDate'))
-	    }));
-	});
-
-	$('#event-ends').trigger('change');
-	$('#event-starts').trigger('change');
+	$("#event-starts").on("dp.change", function (e) {
+        $('#event-ends').data("DateTimePicker").minDate(e.date);
+    });
+    $("#event-ends").on("dp.change", function (e) {
+        $('#event-starts').data("DateTimePicker").maxDate(e.date);
+    });
 	
 	// Cargar Calendario
 	refresh_calendar_events();

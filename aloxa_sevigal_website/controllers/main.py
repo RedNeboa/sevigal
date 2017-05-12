@@ -206,7 +206,7 @@ class SevigalWebsite(webmain.Home):
 
         # FIXME: Deprecated: Usada esta forma por no encontrar otra mejor
         ua = request.httprequest.environ.get('HTTP_USER_AGENT', '').lower()
-        if any(x in ua for x in ('android', 'iphone')):
+        if any(x in ua for x in ('android', 'iphone', 'blackberry')):
             return request.website.render("aloxa_sevigal_website.calendario_mobile", values)
         else:
             return request.website.render("aloxa_sevigal_website.calendario", values)
