@@ -20,7 +20,10 @@ footer {
   display: block !important;
 }
 
-header, main {
+header {
+    display: inline;
+}
+main {
   display: inline !important;
 }
 
