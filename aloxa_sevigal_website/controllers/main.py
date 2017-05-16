@@ -673,12 +673,12 @@ class SevigalWebsite(webmain.Home):
     #
     @http.route(['/registrar/llamada'], type='json', auth="none", jsonrpckey=True, cors='*')
     def register_call(self, did, src, dst, start, duration):
-        #remote_addr = request.httprequest.remote_addr
         user_id = request.jsonrpckey['user']
 
         # Imprimir Info Debug
-        #_logger.info("[JSON-RPC][REGISTRAR/LLAMADA][%s] -- did: %s -- src: %s -- dst: %s -- start: %s -- duration: %s" %
-        #             (remote_addr, did, src, dst, start, duration))
+        remote_addr = request.httprequest.remote_addr
+        _logger.info("[JSON-RPC][REGISTRAR/LLAMADA][%s] -- did: %s -- src: %s -- dst: %s -- start: %s -- duration: %s" %
+                     (remote_addr, did, src, dst, start, duration))
 
         # Comprobar IP
         #if not remote_addr == '192.168.122.1':
