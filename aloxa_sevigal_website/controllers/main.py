@@ -677,7 +677,7 @@ class SevigalWebsite(webmain.Home):
 
         # Imprimir Info Debug
         remote_addr = request.httprequest.remote_addr
-        _logger.info("[JSON-RPC][REGISTRAR/LLAMADA][%s] -- did: %s -- src: %s -- dst: %s -- start: %s -- duration: %s" %
+        _logger.info("[JSON-RPC][REGISTRAR/LLAMADA][%s] -- did: '%s' -- src: '%s' -- dst: '%s' -- start: '%s' -- duration: '%s'" %
                      (remote_addr, did, src, dst, start, duration))
 
         # Comprobar IP
