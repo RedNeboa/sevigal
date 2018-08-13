@@ -21,9 +21,9 @@
 #===============================================================================
 # # REMOTE DEBUG
 #import pydevd
-# 
+#
 # # ...
-# 
+#
 # # breakpoint
 #pydevd.settrace("10.0.3.1")
 #===============================================================================
@@ -35,10 +35,14 @@ Modelo que extiende res.partner para agregar campos al modelo para gestion de ll
 class forum_post(models.Model):
     _name = 'forum.post'
     _inherit = 'forum.post'
-    
+
     #Fields
-    tipo = fields.Selection([('Notificacion', 'Notificación'), ('Mensaje', 'Mensaje'), ('Reunion', 'Reunión'), ('Viaje','Viaje')],
-                            string="Tipo de Mensaje")
+    tipo = fields.Selection([
+        ('Notificacion', 'Notificación'),
+        ('Mensaje', 'Mensaje'),
+        ('Reunion', 'Reunión'),
+        ('Viaje', 'Viaje'),
+    ], string="Tipo de Mensaje")
     partner_id = fields.Many2one('res.partner', 'Receptor')
-    
+
 forum_post()

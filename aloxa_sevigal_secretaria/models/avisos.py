@@ -21,67 +21,85 @@
 #===============================================================================
 # # REMOTE DEBUG
 #import pydevd
-# 
+#
 # # ...
-# 
+#
 # # breakpoint
 #pydevd.settrace("10.0.3.1")
 #===============================================================================
-from openerp import models, fields, api
-
 import datetime
+from openerp import models, fields, api
 
 class avisos(models.Model):
     _name = 'sevigal.aviso'
     _inherit = ['ir.needaction_mixin']
     _order = 'create_date desc'
-    
-    def obtener_eventos_mensajes(self):
-        '''
-        Recupera
-        1.- Los mensajes de la web de Reuniones, Viajes y Mensajes que no hayan sido validados
-        2.- Los eventos de calendario creados o modificados en la web por el cliente que tengan fecha de inicio 
-            posterior a la actual
-        '''
-        
-        mensajes = self.env['forum.post'].search([('is_correct','=',False)])
-        for mensaje in mensajes:
-            '''
-            Si no hay ningun aviso asociado a ese mensaje se crea
-            '''            
-            if not self.search([('mensaje_id','=',mensaje.id)]):
-                self.create({'name':mensaje.name, 'tipo':'Mensaje', 'mensaje_id':mensaje.id, 'leido':False})
-        
-        eventos = self.env['calendar.event'].search(['|', ('start_datetime','>=',str(datetime.datetime.today())),
-                                                          ('start_date','>=', datetime.datetime.today())])
-                                                        
-        for evento in eventos:
-            '''
-            Si no hay ningun aviso asociado a ese evento se crea
-            Sino, si hay un aviso ya leido pero se ha actualizado el event_write_date, lo cual indica que se actualizo
-            el evento asociado, se vuelve a poner leido=False para que lo vuelta a mostrar
-            '''
-            if not self.search([('event_id','=',evento.id)]):
-                self.create({'name':evento.name, 'tipo':'Evento', 'event_id':evento.id, 'leido':False,
-                             'event_write_date':evento.write_date})
-            else:
-                aviso = self.search(['&',('event_id','=',evento.id),('event_write_date','!=',evento.write_date)])
-                if aviso:
-                    aviso.write({'leido':False, 'event_write_date':evento.write_date})            
-        
 
-    @api.model
-    def _needaction_domain_get(self):
-        self.obtener_eventos_mensajes()        
-        return [('leido', '=', False)]
-    
     #Fields
-    name=fields.Char('Nombre')
-    tipo = fields.Selection([('Evento','Evento'),('Mensaje','Mensaje')], readonly=True)
+    name = fields.Char('Nombre')
+    tipo = fields.Selection([
+        ('Evento', 'Evento'),
+        ('Mensaje', 'Mensaje'),
+    ], readonly=True)
     event_id = fields.Many2one('calendar.event', "Calendario", readonly=True)
     mensaje_id = fields.Many2one('forum.post', "Mensaje Foro", readonly=True)
     event_write_date = fields.Datetime()
     leido = fields.Boolean('Leído')
     create_date = fields.Datetime('Creado')
-    
+
+    def obtener_eventos_mensajes(self):
+        '''
+        Recupera
+        1.- Los mensajes de la web de Reuniones, Viajes y Mensajes que no hayan
+            sido validados
+        2.- Los eventos de calendario creados o modificados en la web por el
+            cliente que tengan fecha de inicio posterior a la actual
+        '''
+
+        mensajes = self.env['forum.post'].search([('is_correct', '=', False)])
+        for mensaje in mensajes:
+            '''
+            Si no hay ningun aviso asociado a ese mensaje se crea
+            '''
+            if self.search_count([('mensaje_id', '=', mensaje.id)]) == 0:
+                self.create({
+                    'name': mensaje.name,
+                    'tipo': 'Mensaje',
+                    'mensaje_id': mensaje.id,
+                    'leido': False,
+                })
+
+        eventos = self.env['calendar.event'].search([
+            '|', ('start_datetime', '>=', str(datetime.datetime.today())),
+            ('start_date', '>=', datetime.datetime.today())])
+
+        for evento in eventos:
+            '''
+            Si no hay ningun aviso asociado a ese evento se crea
+            Sino, si hay un aviso ya leido pero se ha actualizado el
+            event_write_date, lo cual indica que se actualizo el evento asociado,
+            se vuelve a poner leido=False para que lo vuelta a mostrar
+            '''
+            if not self.search([('event_id', '=', evento.id)]):
+                self.create({
+                    'name': evento.name,
+                    'tipo': 'Evento',
+                    'event_id': evento.id,
+                    'leido': False,
+                    'event_write_date': evento.write_date,
+                })
+            else:
+                aviso = self.search([
+                    '&', ('event_id', '=', evento.id),
+                    ('event_write_date', '!=', evento.write_date),
+                ])
+                if aviso:
+                    aviso.write({'leido':False, 'event_write_date':evento.write_date})
+
+
+    @api.model
+    def _needaction_domain_get(self):
+        self.obtener_eventos_mensajes()
+        return [('leido', '=', False)]
+
 avisos()

@@ -21,9 +21,9 @@
 #===============================================================================
 # # REMOTE DEBUG
 #import pydevd
-# 
+#
 # # ...
-# 
+#
 # # breakpoint
 #pydevd.settrace("10.0.3.1")
 #===============================================================================
@@ -33,24 +33,27 @@ from openerp.osv import osv
 class calendar_event(models.Model):
     _name = 'calendar.event'
     _inherit = 'calendar.event'
-    
+
     '''
     Metodo de workflow de registro de apunte en agenda
     '''
     def registrar_apunte(self):
         if self.phonecall_id:
             self.phonecall_id.registrar_apunte_agenda()
-        
-calendar_event()
+
 
 class llamada(models.Model):
     _name = 'crm.phonecall'
     _inherit = 'crm.phonecall'
-    
-    ESTADOS = [('Respondida', 'Respondida'), ('Registrada', 'Registrada'), ('Cancelada', 'Cancelada')]
-    
+
+    ESTADOS = [
+        ('Respondida', 'Respondida'),
+        ('Registrada', 'Registrada'),
+        ('Cancelada', 'Cancelada'),
+    ]
+
     ESTADOS_REPLEGADOS = ['Cancelada']
-    
+
     @api.model
     def state_groups(self, present_ids, domain, **kwargs):
         replegado = {key: (key in self.ESTADOS_REPLEGADOS) for key, _ in self.ESTADOS}
@@ -59,31 +62,31 @@ class llamada(models.Model):
     _group_by_full = {
         'state': state_groups
     }
-    
+
     def _read_group_fill_results(self, cr, uid, domain, groupby,
-                                  remaining_groupbys, aggregated_fields,
-                                  count_field, read_group_result,
-                                  read_group_order=None, context=None):
-         """
+                                 remaining_groupbys, aggregated_fields,
+                                 count_field, read_group_result,
+                                 read_group_order=None, context=None):
+        """
          The method seems to support grouping using m2o fields only,
          while we want to group by a simple status field.
          Hence the code below - it replaces simple status values
          with (value, name) tuples.
          """
-         if groupby == 'state':
-             ESTADOS_DICT = dict(self.ESTADOS)
-             for result in read_group_result:
-                 state = result['state']
-                 result['state'] = (state, ESTADOS_DICT.get(state))
-    
-         return super(llamada, self)._read_group_fill_results(
-             cr, uid, domain, groupby, remaining_groupbys, aggregated_fields,
-             count_field, read_group_result, read_group_order, context
-         )
+        if groupby == 'state':
+            ESTADOS_DICT = dict(self.ESTADOS)
+            for result in read_group_result:
+                state = result['state']
+                result['state'] = (state, ESTADOS_DICT.get(state))
+
+        return super(llamada, self)._read_group_fill_results(
+            cr, uid, domain, groupby, remaining_groupbys, aggregated_fields,
+            count_field, read_group_result, read_group_order, context
+        )
     '''
     Metodo invocado en el envio de SMS, asociado al pack
     '''
-    @api.multi 
+    @api.multi
     def enviar_sms(self):
         #pydevd.settrace("10.0.3.1")
         if not self.sms_enviado:
@@ -96,16 +99,16 @@ class llamada(models.Model):
     def enviar_email(self):
         return  {
             'type': 'ir.actions.act_window',
-            'name': 'Enviar Email',            
-            #'domain': ['&', ('res_model','=','project.task'), ('res_id','=',context['task_id'])],            
+            'name': 'Enviar Email',
+            #'domain': ['&', ('res_model','=','project.task'), ('res_id','=',context['task_id'])],
             'res_model': 'mail.mail',
-            'context': {'llamada_id': self.id},                            
+            'context': {'llamada_id': self.id},
             'view_type': 'form',
-            'view_mode': 'form',            
-            'target': 'new',               
+            'view_mode': 'form',
+            'target': 'new',
             'nodestroy': True,
         }
-        
+
         #=======================================================================
         # if not self.email_enviado:
         #     self.registrar_consumo_producto_pack('Email')
@@ -126,24 +129,24 @@ class llamada(models.Model):
 
     '''
     Metodo invocado al crear una reunion dese una llamada (apunte de agenda)
-    '''    
+    '''
     def registrar_apunte_agenda(self):
         #pydevd.settrace("10.0.3.1")
         '''
         Esta transicion hace que se registre la llamada a efectos de facturacion y control
         de pack de servicios de Sevigal.
-        '''        
+        '''
         self.registrar_consumo_producto_pack('Apunte Agenda')
-    
+
     '''
     Metodo invocado en a transicion de Registro de llamada
-    '''    
+    '''
     def registrar_llamada(self):
         #pydevd.settrace("10.0.3.1")
         '''
         Esta transicion hace que se registre la llamada a efectos de facturacion y control
         de pack de servicios de Sevigal.
-        '''        
+        '''
         self.registrar_consumo_producto_pack('Llamada')
         self.registrar_notificacion_llamada()
         '''
@@ -153,14 +156,15 @@ class llamada(models.Model):
         '''
         Registrar los fax2mails asociados a la llamada
         '''
-        self.registrar_fax2mails()        
+        self.registrar_fax2mails()
 
-                                        
+
     def registrar_consumo_producto_pack(self, tipo_producto):
         '''
-        Se descontara del numero de elementos del producto del pack el producto consumido y se procesara el desbordamiento
-        del producto al alcanzar el numero maximo de unidades de producto del pack
-        Tambien se programara una alerta cuando este proximo el agotamiento de las unidades de producto del pack
+        Se descontara del numero de elementos del producto del pack el producto
+        consumido y se procesara el desbordamiento del producto al alcanzar el
+        numero maximo de unidades de producto del pack Tambien se programara una
+        alerta cuando este proximo el agotamiento de las unidades de producto del pack
         1.- Localizar el contrato asociado al cliente
         2.- Por cada linea de producto (product.product) del Contrato localizar el Pack asociado
         3.- Descontar la unidad de producto del pack
@@ -181,59 +185,70 @@ class llamada(models.Model):
                         pack_lines_contrato = line.pack_line_consumido_ids
                         #pack_lines = line.product_id.pack_line_ids
                         ctdad_producto_pack = 0
-                        ctdad_producto_consumido = 0                  
+                        ctdad_producto_consumido = 0
                         #Obtencion del numero de elementos del pack consumidos y disponibles
                         for pcline in pack_lines_contrato:
                             if pcline.product_id and pcline.product_id.tipo_producto_pack:
                                 if pcline.product_id.tipo_producto_pack == tipo_producto:
                                     ctdad_producto_consumido = pcline.consumido
-                                    ctdad_producto_pack = pcline.disponible                                    
+                                    ctdad_producto_pack = pcline.disponible
                                     if ctdad_producto_consumido < ctdad_producto_pack:
                                         pcline.consumido += 1
                                         '''
-                                        Control del numero que el numero de producto de pack consumido alcance
-                                        el numero de unidades de aviso. En caso afirmativo se creara una
-                                        oportunidad de ampliacion de pack para ese cliente
+                                        Control del numero que el numero de
+                                        producto de pack consumido alcance
+                                        el numero de unidades de aviso. En caso
+                                        afirmativo se creara una oportunidad de
+                                        ampliacion de pack para ese cliente
                                         '''
-                                        opciones = self.env['sevigal.opciones'].search([('nombre','=','Default')])
+                                        opciones = self.env['sevigal.opciones'].search([
+                                            ('nombre', '=', 'Default'),
+                                        ])
                                         if opciones:
                                             uni_aviso = opciones.unidades_aviso_expiracion_pack
                                             if ctdad_producto_pack - ctdad_producto_consumido == uni_aviso:
-                                                contrato._crear_oportunidad_agotamiento_pack(self.partner_id, pcline.product_id)
-                                                 
+                                                contrato.crear_oportunidad_agotamiento_pack(
+                                                    self.partner_id,
+                                                    pcline.product_id)
+
                                     else:
-                                        linea = contrato.obtener_line_factu_recurr_no_pack(pcline.product_id)
+                                        linea = contrato.obtener_line_factu_recurr_no_pack(
+                                            pcline.product_id)
                                         if linea:
                                             linea[0].quantity += 1
-    
+
     def registrar_llamadas_transferidas(self):
         if self.llamada_transferida_ids:
             contrato = self._obtener_contrato_partner_llamada()
             '''
-            Para cada llamada transferida registramos en la linea de facturacion asociada al tipo de
-            llamada transferida la duracion en minutos, que se agregara al total de minutos consumidos
-            de esa linea en el campo cantidad (quantity) 
+            Para cada llamada transferida registramos en la linea de facturacion
+            asociada al tipo de llamada transferida la duracion en minutos, que
+            se agregara al total de minutos consumidos de esa linea en el campo
+            cantidad (quantity)
             '''
-            for transferida in self.llamada_transferida_ids:                
+            for transferida in self.llamada_transferida_ids:
                 if contrato:
                     linea = contrato.obtener_line_factu_recurr_no_pack(transferida.product_id)
                     if linea:
                         linea[0].quantity += transferida.duracion
-                        
+
     def registrar_fax2mails(self):
         if self.fax2mail_ids:
             contrato = self._obtener_contrato_partner_llamada()
             '''
             Para cada fax2mail registramos en la linea de facturacion asociada al tipo de
-            fax2mail 
+            fax2mail
             '''
-            for fax2mail in self.fax2mail_ids:                
+            # FIXME
+            for fax2mail in self.fax2mail_ids:
                 if contrato:
-                    self.registrar_consumo_producto_pack('Fax2Mail')                        
-                                            
+                    self.registrar_consumo_producto_pack('Fax2Mail')
+
     def registrar_notificacion_llamada(self):
         #pydevd.settrace("192.168.3.1")
-        opciones = self.env['sevigal.opciones'].search([('nombre','=','Default')])
+        opciones = self.env['sevigal.opciones'].search([
+            ('nombre', '=', 'Default'),
+        ])
         if opciones:
             foro = opciones.foro_notificaciones_id
         if foro and self.partner_id:
@@ -245,23 +260,25 @@ class llamada(models.Model):
                        'partner_id':self.partner_id.id,
                        'content':texto,
                        'is_correct':True}
-            if self.env.user.id == 1 or self.env.user.karma > 0:            
-                mensaje = self.env['forum.post'].create(menvals)
+            if self.env.user.id == 1 or self.env.user.karma > 0:
+                self.env['forum.post'].create(menvals)
             else:
-                raise osv.except_osv(('Error en el envío de la Notificación'),
-                                     ('No tiene suficiente karma en el foro para enviar mensaje...'))
+                raise osv.except_osv(
+                    ('Error en el envío de la Notificación'),
+                    ('No tiene suficiente karma en el foro para enviar mensaje...'))
         else:
-                raise osv.except_osv(('Error en el envío de la Notificación'),
-                                     ('No se ha podido localizar el foro asociado al mensaje de notificación...'))            
+            raise osv.except_osv(
+                ('Error en el envío de la Notificación'),
+                ('No se ha podido localizar el foro asociado al mensaje de notificación...'))
                 #===============================================================
                 # return {'warning': {
                 #         'title':'Error en el envío de la Notificación',
                 #         'message': 'No tiene suficiente karma en el foro para enviar mensaje...',
                 #         }}
                 #===============================================================
-                           
-        
-    
+
+
+
     '''
     Devuelve el contrato de facturacion periodica del cliente de la llamada
     Un cliente deberia tener un contrato y este a su vez una linea de facturacion recurrente para el pack
@@ -273,13 +290,13 @@ class llamada(models.Model):
             #Para los partners que sean contactos de una empresa tomamos el contrato de la empresa
             if partner.parent_id:
                 partner = partner.parent_id
-            contrato = self.env['account.analytic.account'].search([('partner_id','=',partner.id)])
+            contrato = self.env['account.analytic.account'].search([
+                ('partner_id', '=', partner.id)
+            ], limit=1)
             if contrato:
-                contrato = contrato[0]
-                return contrato               
-
+                return contrato
         return False
-    
+
 #     '''
 #     Crea la oportunidad cuando se alcanza el consumo de advertencia de pack de un cliente
 #     '''
@@ -298,13 +315,13 @@ class llamada(models.Model):
 #                                      'phone':partner.phone if partner.phone else '',
 #                                      'email':partner.email if partner.email else '',
 #                                      })
-            
+
     #Fields
     state = fields.Selection(ESTADOS, string='Estado', default='Respondida')
     sms_enviado = fields.Boolean('SMS enviado', default=False)
     email_enviado = fields.Boolean('Email enviado', default=False)
     telefono_emisor = fields.Char('Teléfono Emisor')
-    llamada_transferida_ids = fields.One2many('sevigal.llamada.transferida','llamada_id','Llamadas Transferidas')
-    fax2mail_ids = fields.One2many('sevigal.fax2mail','llamada_id','Fax2Mails')
-    
-llamada()
+    llamada_transferida_ids = fields.One2many(
+        'sevigal.llamada.transferida', 'llamada_id', 'Llamadas Transferidas')
+    fax2mail_ids = fields.One2many(
+        'sevigal.fax2mail', 'llamada_id', 'Fax2Mails')

@@ -15,7 +15,6 @@ from openerp.addons.website.controllers.main import Website as controllers
 from openerp.addons.website.models.website import slug
 import openerp.addons.website_forum.controllers.main as forum
 
-controllers = controllers()
 
 # Really crazy! Reimplement all forum class O_o
 class WebsiteForum(forum.WebsiteForum):
@@ -172,7 +171,7 @@ class WebsiteForum(forum.WebsiteForum):
 
         # increment view counter
         request.registry['forum.post'].set_viewed(cr, SUPERUSER_ID, [question.id], context=context)
-        
+
         if question.parent_id:
             redirect_url = "/mensaje/%s" % slug(question.parent_id)
             return werkzeug.utils.redirect(redirect_url, 301)
@@ -196,7 +195,7 @@ class WebsiteForum(forum.WebsiteForum):
             favourite_ids = [(4, request.uid)]
         else:
             favourite_ids = [(3, request.uid)]
-            
+
         question.sudo().write({'favourite_ids': favourite_ids}, context=request.context)
         return favourite
 
@@ -326,7 +325,7 @@ class WebsiteForum(forum.WebsiteForum):
         Tag = request.registry['forum.tag']
         Forum = request.registry['forum.forum']
         tag_version = kwargs.get('tag_type', 'texttext')
-        
+
         vals = {
             'name': kwargs.get('question_name'),
             'content': kwargs.get('content'),

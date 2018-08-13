@@ -21,9 +21,9 @@
 #===============================================================================
 # # REMOTE DEBUG
 #import pydevd
-# 
+#
 # # ...
-# 
+#
 # # breakpoint
 #pydevd.settrace("10.0.3.1")
 #===============================================================================
@@ -33,8 +33,7 @@ class opciones(models.Model):
     _name = 'sevigal.opciones'
     _rec_name = 'nombre'
     #Fields
-    nombre=fields.Char('Nombre', default=lambda self: "Default",)
-    unidades_aviso_expiracion_pack=fields.Integer('Unidades mínimas de aviso de expiración de pack', default=5)
-    foro_notificaciones_id = fields.Many2one('forum.forum', 'Foro de Notificaciones')  
-    
-opciones()
+    nombre = fields.Char('Nombre', default=lambda self: "Default",)
+    unidades_aviso_expiracion_pack = fields.Integer(
+        'Unidades mínimas de aviso de expiración de pack', default=5)
+    foro_notificaciones_id = fields.Many2one('forum.forum', 'Foro de Notificaciones')
