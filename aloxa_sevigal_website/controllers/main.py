@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
+import datetime
+import logging
+import pytz
+from dateutil import tz
 
 import werkzeug.exceptions
 import werkzeug.urls
 import werkzeug.wrappers
 import simplejson
 
-from openerp import http, models, api, exceptions, SUPERUSER_ID
+from openerp import http, models, api, exceptions, fields, SUPERUSER_ID
 from openerp.http import request
 from openerp.addons.website.models.website import slug
 from openerp.addons.web.controllers.main import content_disposition
+from openerp.addons.email_template.email_template import format_tz
 #from openerp.addons.jsonrpc_keys import jsonrpckeys
-from . import utils
-import json
-import pytz
-import datetime
 import openerp.addons.web.controllers.main as webmain
-import logging
+from openerp.tools import (
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DEFAULT_SERVER_DATE_FORMAT)
 _logger = logging.getLogger(__name__)
 
 
@@ -28,17 +31,24 @@ class SevigalWebsite(webmain.Home):
 
     def _get_notifications(self):
         cr, uid, context = request.cr, request.uid, request.context
-        Message = request.registry['mail.message']
-        badge_st_id = request.registry['ir.model.data'].xmlid_to_res_id(cr, uid, 'gamification.mt_badge_granted')
+        message = request.registry['mail.message']
+        badge_st_id = request.registry['ir.model.data'].xmlid_to_res_id(
+            cr,
+            uid,
+            'gamification.mt_badge_granted')
         if badge_st_id:
-            msg_ids = Message.search(cr, uid, [('subtype_id', '=', badge_st_id), ('to_read', '=', True)], context=context)
-            msg = Message.browse(cr, uid, msg_ids, context=context)
+            msg_ids = message.search(cr, uid, [
+                ('subtype_id', '=', badge_st_id),
+                ('to_read', '=', True)
+            ], context=context)
+            msg = message.browse(cr, uid, msg_ids, context=context)
         else:
             msg = list()
         return msg
 
     def _prepare_forum_values(self, forum=None, **kwargs):
-        current_user = request.registry['res.users'].browse(request.cr, request.uid, request.uid, context=request.context)
+        current_user = request.registry['res.users'].browse(
+            request.cr, request.uid, request.uid, context=request.context)
         values = {
             'user': current_user,
             'is_public_user': current_user.id == request.website.user_id.id,
@@ -51,7 +61,8 @@ class SevigalWebsite(webmain.Home):
         if forum:
             values['forum'] = forum
         elif kwargs.get('forum_id'):
-            values['forum'] = request.registry['forum.forum'].browse(request.cr, request.uid, kwargs.pop('forum_id'), context=request.context)
+            values['forum'] = request.registry['forum.forum'].browse(
+                request.cr, request.uid, kwargs.pop('forum_id'), context=request.context)
         values.update(kwargs)
         return values
 
@@ -76,7 +87,8 @@ class SevigalWebsite(webmain.Home):
 
         if request.httprequest.method == 'POST':
             old_uid = request.uid
-            uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
+            uid = request.session.authenticate(
+                request.session.db, request.params['login'], request.params['password'])
             if uid is not False:
                 return http.redirect_with_hash(redirect)
             request.uid = old_uid
@@ -117,7 +129,7 @@ class SevigalWebsite(webmain.Home):
         # questions and answers by user
         user_question_ids = Post.search(cr, uid, [
                 ('parent_id', '=', False),
-                ('forum_id', '=', forum.id), 
+                ('forum_id', '=', forum.id),
                 ('create_uid', 'in', user_ids),
             ], order='create_date desc', context=context)
 
@@ -367,7 +379,7 @@ class SevigalWebsite(webmain.Home):
         #                                  url_args=url_args)
         #    obj_ids = Post.search(cr, uid, domain_read, limit=self._post_per_page, offset=pager['offset'], order=order, context=context)
         #    question_ids = Post.browse(cr, uid, obj_ids, context=context)
-        #    
+        #
         #    domain_unread = domain+[('views','=',0)]
         #    question_count_unread = Post.search(cr, uid, domain_unread, count=True, context=context)
         #    pager_unread = request.website.pager(url=url, total=question_count, page=page,
@@ -505,7 +517,7 @@ class SevigalWebsite(webmain.Home):
 
         return werkzeug.utils.redirect("/mensaje/%s" % new_question_id)
 
-    @http.route('/cerrar/pregunta/<model("forum.post"):question>', 
+    @http.route('/cerrar/pregunta/<model("forum.post"):question>',
                 type='http', auth="user", methods=['POST'], website=True)
     def question_ask_for_close(self, question, **post):
         cr, uid, context = request.cr, request.uid, request.context
@@ -572,7 +584,7 @@ class SevigalWebsite(webmain.Home):
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
 
-        domain = [('forum_id', '=', forum.id), ('parent_id', '=', False), ('state', '=', 'active'), ('partner_id','in',partner_ids), 
+        domain = [('forum_id', '=', forum.id), ('parent_id', '=', False), ('state', '=', 'active'), ('partner_id','in',partner_ids),
                   ('tipo','=','Notificacion'), ('views','=',0)]
         question_count = Post.search(cr, uid, domain, count=True, context=context)
         last_reg = Post.search(cr, uid, domain, limit=1, order='id desc', context=context)
@@ -585,54 +597,81 @@ class SevigalWebsite(webmain.Home):
             return {'error': 'anonymous_user'}
 
         cr, uid, context = request.cr, request.uid, request.context
+        context.update({
+            'use_babel': True,
+        })
         User = request.registry['res.users']
         current_user = User.browse(cr, SUPERUSER_ID, uid, context=context)
-        childs_users = request.env['res.users'].search([('partner_id.parent_id', '=', current_user.partner_id.id)])
+        childs_users = request.env['res.users'].search([
+            ('partner_id.parent_id', '=', current_user.partner_id.id)
+        ])
         partner_ids = [current_user.partner_id.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
 
-        events = request.env['calendar.event'].search([('partner_ids','in',partner_ids)])
+        events = request.env['calendar.event'].search([('partner_ids', 'in', partner_ids)])
         result = []
         for event in events:
-            last_modif_user = request.env['res.users'].sudo().search([('partner_id', '=', event.message_ids[-1].author_id.id)])
+            start_dt_utc = fields.Datetime.from_string(event.start).replace(tzinfo=tz.gettz('UTC'))
+            start_dt = start_dt_utc.astimezone(tz.gettz('Europe/Madrid'))
+            end_dt_utc = fields.Datetime.from_string(event.stop).replace(tzinfo=tz.gettz('UTC'))
+            end_dt = end_dt_utc.astimezone(tz.gettz('Europe/Madrid'))
+
+            last_modif_user = request.env['res.users'].sudo().search([
+                ('partner_id', '=', event.message_ids[-1].author_id.id)
+            ])
+            group_user_sevigal = last_modif_user.has_group(
+                'aloxa_sevigal_secretaria.sevigal_user_group')
             result.append({
                 'title': event.name,
-                'start': event.start,
-                'end': event.stop if not event.allday else None,
+                'start': start_dt.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                'end': end_dt.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                 'allDay': event.allday,
                 'id': event.id,
-                'color': "#31698A" if last_modif_user.has_group('aloxa_sevigal_secretaria.sevigal_user_group') else "#6DC066"
+                'description': event.description,
+                'color': "#31698A" if group_user_sevigal else "#6DC066"
             })
 
         return result
 
     @http.route(['/calendario/uc_event'], type='json', website=True)
-    def calendario_update_event(self, id, start, stop, allday, title):
+    def calendario_update_event(self, id, start, stop, allday, title, description):
         if not request.session.uid:
             return {'error': 'anonymous_user'}
 
         cr, uid, context = request.cr, request.uid, request.context
         User = request.registry['res.users']
         current_user = User.browse(cr, SUPERUSER_ID, uid, context=context)
-        childs_users = request.env['res.users'].search([('partner_id.parent_id', '=', current_user.partner_id.id)])
+        childs_users = request.env['res.users'].search([
+            ('partner_id.parent_id', '=', current_user.partner_id.id)
+        ])
         partner_ids = [current_user.partner_id.id]
         user_ids = [current_user.id]
         for user_child in childs_users:
             partner_ids.append(user_child.partner_id.id)
             user_ids.append(user_child.id)
 
-        if id >= 0:
-            event = request.env['calendar.event'].search([('id','=',id),'|',('user_id','in',user_ids),('partner_ids','in',partner_ids)], limit=1)
-            event.write({ 'stop':stop, 'start':start, 'allday':allday, 'name': title })
-            return {}
+        ev_vals = {
+            'start': start,
+            'stop': stop,
+            'allday': allday,
+            'name': title,
+            'description': description,
+        }
+        ret = {}
+        if id > 0:
+            event = request.env['calendar.event'].search([
+                ('id', '=', id), '|',
+                ('user_id', 'in', user_ids), ('partner_ids', 'in', partner_ids)
+            ], limit=1)
+            event.write(ev_vals)
         else:
             Model = request.session.model('calendar.event')
-            event_id = Model.create({ 'stop':stop, 'start':start, 'allday':allday, 'name':title }, request.context)
+            event_id = Model.create(ev_vals, request.context)
             event = Model.browse(event_id)
-            event.write({ 'partner_ids':[current_user.partner_id.id] })
-
-            return {'id': event_id}
+            event.write({'partner_ids': [current_user.partner_id.id]})
+            ret = {'id': event_id}
+        return ret
 
     @http.route(['/calendario/delete_event'], type='json', website=True)
     def calendario_delete_event(self, id):
@@ -668,7 +707,7 @@ class SevigalWebsite(webmain.Home):
     # start - Comienzo de la llamada. Formato: yyyy-mm-dd hh:mm:ss sin información de zona horaria.
     # duration - Duración (facturable) en segundos de la llamada.
     #
-    # Los atributos "did, src, dst" estarán en formato E164 (en caso de ser numeración geográfica o móvil) 
+    # Los atributos "did, src, dst" estarán en formato E164 (en caso de ser numeración geográfica o móvil)
     # o en formato extensión interna (solamente dígitos).
     #
     @http.route(['/registrar/llamada'], type='json', auth="none", jsonrpckey=True, cors='*')

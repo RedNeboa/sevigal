@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <openerp>
 	<data>
-		
+
 		<!-- MENU ODOO -->
 		<template id="menu_top" inherit_id="website.user_navbar">
 			<xpath expr="//nav" position="replace"></xpath>
 		</template>
 		<!-- FIN: MENU ODOO -->
-		
+
 		<!-- MENU PRINCIPAL -->
 		<template id="menu_top" inherit_id="website.layout">
 			<xpath expr="//main" position="replace">
@@ -22,7 +22,7 @@
 		        	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="slide-nav">
   						<div class="container">
    							<div class="navbar-header">
-    							<a class="navbar-toggle"> 
+    							<a class="navbar-toggle">
       								<span class="sr-only">Toggle navigation</span>
       								<span class="icon-bar"></span>
       								<span class="icon-bar"></span>
@@ -45,7 +45,7 @@
 								      	</span>
 								    </div>
 					            </form>
-						            
+
           						<ul id="top_menu" class="nav navbar-nav">
 									<li t-att-class="header.get('type') == 'Index' and 'active' or '' ">
 						            	<a href="/"><i class="fa fa-home"></i> Información</a>
@@ -85,12 +85,12 @@
 		</template>
 		<!-- FIN: MENU PRINCIPAL -->
 
-		<template id="header" inherit_id="website_forum.header" name="Forum Index">						
+		<template id="header" inherit_id="website_forum.header" name="Forum Index">
 			<!-- MENU -->
 			<xpath expr="//div[@class='navbar navbar-default']" position="replace"></xpath>
 			<!-- FIN: MENU -->
 		</template>
-		
+
 		<!-- BOTONES LINK FORO -->
 		<template id="link_button" inherit_id="website_forum.link_button">
 			<xpath expr="//button" position="replace">
@@ -107,7 +107,7 @@
 			</xpath>
 		</template>
 		<!-- FIN: BOTONES LINK FORO -->
-		
+
 		<!-- LOGIN -->
 		<template id="login_layout" inherit_id="website.login_layout">
 			<xpath expr="//div[@class='oe_website_login_container']" position="attributes">
@@ -119,37 +119,37 @@
 				<div class="col-md-12">
 					<img style="height:150px;" src="/aloxa_sevigal_website/static/src/img/LogoSevigal.png" alt="Aloxa Sevigal" class="img-responsive center-block"/>
 	                <form class="oe_login_form" role="form" t-attf-action="/web/login{{ '?debug' if debug else '' }}" method="post" onsubmit="this.action = this.action + location.hash">
-	
+
 	                    <t t-call="web.database_select"/>
-	
+
 	                    <div class="form-group field-login">
 	                        <label for="login" class="control-label">Email</label>
 	                        <input type="text" name="login" t-att-value="login" id="login" class="form-control" required="required" autofocus="autofocus"/>
 	                    </div>
-	
+
 	                    <div class="form-group field-password">
 	                        <label for="password" class="control-label">Contraseña</label>
 	                        <input type="password" name="password" id="password" class="form-control" required="required" t-att-autofocus="'autofocus' if login else None"/>
 	                    </div>
-	
+
 	                    <p class="alert alert-danger" t-if="error">
 	                        <t t-esc="error"/>
 	                    </p>
 	                    <p class="alert alert-success" t-if="message">
 	                        <t t-esc="message"/>
 	                    </p>
-	
+
 	                    <input type="hidden" name="redirect" t-att-value="redirect"/>
 	                    <div class="clearfix oe_login_buttons" style="margin-bottom:1em;">
 	                        <button type="submit" class="btn btn-primary">Entrar</button>
 	                    </div>
-	
+
 	                </form>
                 </div>
 			</xpath>
 		</template>
 		<!-- FIN: LOGIN -->
-		
+
 		<!-- CAJETIN DE RESPUESTA A MENSAJE -->
 		<template id="post_answer">
 		    <h3 class="mt10"><i class="fa fa-lg fa-caret-right"></i> Tu Respuesta</h3>
@@ -163,7 +163,7 @@
 			</div>
 		</template>
 		<!-- FIN: CAJETIN DE RESPUESTA A MENSAJE -->
-		
+
 		<!-- DETALLE MENSAJE -->
 		<template id="post_description_full" name="Mensaje">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -218,7 +218,7 @@
 		                </ul>
 		    		</div>
 		        </div>
-		        
+
 		        <div class="block-sevigal-simple bg-danger" t-if="question.state == 'close'">
                     <p>
                         <b>El mensaje se ha cerrado<t t-if="question.closed_reason_id"> por el motivo: <i t-esc="question.closed_reason_id.name"/></t></b>
@@ -230,7 +230,7 @@
                     </t>
                     <b>el <span t-field="question.closed_date"/></b>
 		        </div>
-		        
+
 		        <div class="row">
 			     	<div class="col-xs-12 col-md-12 text-center">
 		                 <div class="text-muted text-center">
@@ -246,7 +246,7 @@
 	                 	</div>
 	                </div>
                 </div>
-                
+
 		        <div class="block-sevigal-simple bg-default">
 		        	<div class="row">
 		        		<div class="col-md-12 col-xs-12">
@@ -304,7 +304,7 @@
 		        <h4 t-if="question.child_ids and len(question.child_ids) > 0">
 		        	<i class="fa fa-caret-right fa-lg"></i> Respuesta
 		        </h4>
-		        
+
 		    	<div t-foreach="question.child_ids" t-as="answer" class="mt16 mb32">
 		    		<a t-attf-id="answer-#{str(answer.id)}"/>
 		    		<div class="block-sevigal-simple bg-default" t-attf-id="answer_#{answer.id}">
@@ -405,18 +405,18 @@
 		    </t>
 		</template>
 		<!-- FIN: DETALLE MENSAJE -->
-		
+
 		<!-- CERRAR PREGUNTA -->
 		<template id="close_question" name="Cerrar Pregunta">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
 		    	<div id="block-section-header" class="block-sevigal bg-default">
 					<h1 class="mt0">Cerrar Pregunta</h1>
 			        <p class="text-muted">
-			        	Si cierras una pregunta, está se ocultará. 
+			        	Si cierras una pregunta, está se ocultará.
 			        	Solo los administradores podrán seguir viéndola.
 			        </p>
 		    	</div>
-		    	
+
 		        <form t-attf-action="/forum/#{ slug(forum) }/question/#{slug(question)}/close" method="post" role="form" class="form-horizontal mt32 mb64">
 		            <input name="post_id" t-att-value="question.id" type="hidden"/>
 		            <div class="block-sevigal-simple bg-default">
@@ -448,7 +448,7 @@
 		    </t>
 		</template>
 		<!-- FIN: CERRAR PREGUNTA -->
-		
+
 		<!-- TEMPLATE VACIO -->
 		<template id="empty-forum">
 		   	<t t-call="website.layout">
@@ -467,7 +467,7 @@
    	 		</t>
 		</template>
 		<!-- FIN: TEMPLATE VACIO -->
-		
+
 		<!-- CONTENIDO PAGINAS -->
 		<template id="page_index" name="Panel">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -484,7 +484,7 @@
 					<t t-set="url_ask" t-value="'/mensajes/preguntar'" />
 					<t t-set="str_ask" t-value="'Enviar Mensaje'" />
 				</t>
-				
+
 				<t t-if="str_ask and not header.get('ask_hide')">
 					<div class="col-md-3 visible-xs" id="right-column">
 		                <a t-attf-class="btn btn-primary btn-lg btn-block mb16"
@@ -495,7 +495,7 @@
 		                </a>
 		        	</div>
                 </t>
-		    
+
 		    	<div class="col-md-9">
 		    		<div id="block-section-header" class="block-sevigal bg-default">
 				        <h1 class="mt0">
@@ -561,7 +561,7 @@
 				            </small>
 				        </h3>
 			        </div>
-			        
+
 					<div class="subblock-sevigal bg-default clearfix" t-if="question_ids">
 				     	<div t-foreach="question_ids" t-as="question" class="">
 			            	<t t-call="aloxa_sevigal_website.display_post"/>
@@ -569,7 +569,7 @@
 					</div>
 			  		<t t-call="website.pager"/>
 				</div>
-			
+
 				<t t-if="str_ask and not header.get('ask_hide')">
 					<div class="col-md-3 hidden-xs" id="right-column">
 		                <a class="btn btn-primary btn-lg btn-block mb16"
@@ -584,8 +584,8 @@
 		    </t>
 		</template>
 		<!-- FIN: CONTENIDO PAGINAS -->
-		
-		
+
+
 		<!-- LISTA MENSAJES -->
 		<template id="display_post">
 			<a class="sevigal-message-link" t-attf-href="/mensaje/#{ slug(question) }">
@@ -637,7 +637,7 @@
 		    </a>
 		</template>
 		<!-- FIN: LISTA MENSAJES -->
-		
+
 		<!-- CALENDARIO -->
 		<template id="calendario" name="Calendario">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -664,8 +664,12 @@
 								          	</div>
 							          	</div>
 							          	<div class="form-group">
-							            	<label for="message-text" class="control-label">Nombre Evento:</label>
+							            	<label for="event-name" class="control-label">Nombre Evento:</label>
 							            	<input type="text" class="form-control" id="event-name" autofocus="autofocus" />
+							          	</div>
+													<div class="form-group">
+							            	<label for="event-desc" class="control-label">Descripción:</label>
+							            	<input type="text" class="form-control" id="event-desc" autofocus="autofocus" />
 							          	</div>
 							        </form>
 					     		</div>
@@ -677,13 +681,13 @@
 					      	</div>
 					    </div>
 					</div>
-		        </div>  	   
+		        </div>
 		    </t>
 
 			<script type='text/javascript' src='/aloxa_sevigal_website/static/src/js/standart_calendar.js' />
 		</template>
 		<!-- FIN: CALENDARIO -->
-		
+
 		<!-- DISPLAY POST ANSWER -->
 		<template id="display_post_answer">
 		    <div class="clearfix">
@@ -701,7 +705,7 @@
 		    </div>
 		</template>
 		<!-- FIN: DISPLAY POST ANSWER -->
-		
+
 		<!-- INFORMACION -->
 		<template id="info" name="Información">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -720,7 +724,7 @@
 		    			</table>
 					</div>
 				</div>
-				
+
 		    	<div class="block-sevigal-simple bg-default">
 		    		<h3 class="mt0"><i class="fa fa-lg fa-phone"></i> Teléfonos</h3>
 					<table class="table table-condensed table-hover table-striped">
@@ -746,7 +750,7 @@
 					</table>
 					<div class="text-right"><a href="#" class="btn btn-link" data-toggle="modal" data-target="#modalNewPhoneNumber"><i class="fa fa-plus"></i> Añadir Nuevo</a></div>
 		    	</div>
-		    
+
 		    	<div class="block-sevigal-simple bg-default">
 		       		<ul class="nav nav-pills">
 			            <li>
@@ -819,7 +823,7 @@
 			            </div>
 			    	</div>
 		        </div>
-		        
+
 				<div class="modal fade" id="modalNewPhoneNumber" tabindex="-1" role="dialog">
 					<div class="modal-dialog" role="document">
 						<form id="ncontact" class="form-inline" style="margin-bottom:1em;">
@@ -829,11 +833,15 @@
 					        		<h4 class="modal-title" id="exampleModalLabel">Nuevo Número de Teléfono</h4>
 					      		</div>
 					      		<div class="modal-body">
-					      			<label for="nphone">Teléfono:</label>
-								    <input type="tel" class="form-control" id="nphone" name="nphone" placeholder="Teléfono" />
-								    <label for="nphone">Descripción:</label>
-								    <input type="text" class="form-control" id="ndesc" name="ndesc" placeholder="Descripción" />
-					     		</div>
+											<div class="form-group">
+					      				<label for="nphone" class="control-label">Teléfono:</label>
+									    	<input type="tel" class="form-control" id="nphone" name="nphone" placeholder="Teléfono" />
+											</div>
+											<div class="form-group">
+									    	<label for="ndesc" class="control-label">Descripción:</label>
+									    	<input type="text" class="form-control" id="ndesc" name="ndesc" placeholder="Descripción" />
+											</div>
+					     			</div>
 					      		<div class="modal-footer">
 					        		<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 					        		<button type="submit" class="btn btn-primary">Crear</button>
@@ -845,7 +853,7 @@
 		    </t>
 		</template>
 		<!-- FIN: INFORMACION -->
-		
+
 		<!-- DETALLE FACTURA -->
 		<template id="invoice_detail" name="Factura">
 			<div t-if="recurring" style="margin-bottom: 2em;" class="block-sevigal-simple bg-info">
@@ -858,7 +866,7 @@
 						<div class="line-section">
 							<small><i class="fa fa-chevron-right"></i> [Pack] <strong t-esc="line.name" /> <i t-esc="'x%d' % line.quantity" /></small>
 						</div>
-				  	   
+
 				  	   	<div class="line-section-detail">
 				  			<t t-foreach="line.pack_line_consumido_ids" t-as="product">
 				  				<div class="text-muted"><small><span t-esc="product.product_id.name" /> <i t-esc="'(%d de %d)' % (product.consumido,product.disponible)" /></small></div>
@@ -879,7 +887,7 @@
 			</div>
 		</template>
 		<!-- FIN: DETALLE FACTURA -->
-		
+
 		<!-- FACTURAS -->
 		<template id="facturas" name="Facturas">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -930,11 +938,11 @@
 							</t>
 						</div>
 		            </div>
-		        </div>   
+		        </div>
 		    </t>
 		</template>
 		<!-- FIN: FACTURAS -->
-		
+
 		<!-- PREGUNTAR -->
 		<template id="ask_question" name="Realizar una pregunta">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -943,7 +951,7 @@
 		    			Realizar Pregunta
 		    		</h1>
 		        </div>
-		        
+
 		        <form t-attf-action="#{header.get('url_ask')}" method="post" role="form" class="tag_text">
 		        	<div id="box-cke" class="block-sevigal-simple bg-default flat-controls">
 			            <input type="text" name="question_name" required="True" t-attf-value="#{question_name}"
@@ -965,7 +973,7 @@
 		    </t>
 		</template>
 		<!-- FIN: PREGUNTAR -->
-		
+
 		<!-- EDITAR PREGUNTA -->
 		<template id="edit_post" name="Editar Pregunta/Respuesta">
 		    <t t-call="aloxa_sevigal_website.empty-forum">
@@ -1004,6 +1012,6 @@
 		    </t>
 		</template>
 		<!-- FIN EDITAR PREGUNTA -->
-		
+
 	</data>
 </openerp>

@@ -31,7 +31,7 @@ import datetime
 import pytz
 from openerp import models, fields, api
 
-# FIXME: NOT USE HARD-CODE!
+# FIXME: REALLY NECESSARY FALLBACK EMAIL?
 SEVIGAL_MAIL = "info@sevigal.com"
 
 class mail_mail(models.Model):

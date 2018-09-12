@@ -1,3 +1,2 @@
 "id","perm_create","perm_unlink","perm_write","perm_read","groups/id","name","model_id/id","domain_force","active"
 "aloxa_sevigal_secretaria_ocultar_user_rule_id","True","True","True","False","aloxa_sevigal_secretaria.sevigal_user_group","admin_noeditable_sevigal_user_rule","auth_crypt.model_res_users","[('login','!=','admin')]","True"
-"base.res_partner_portal_public_rule",,,,,,,,,"False"

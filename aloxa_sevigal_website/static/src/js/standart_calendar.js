@@ -2,7 +2,6 @@
  * CALENDARIO
  */
 openerp.website.if_dom_contains('#calendar', function(){
-	
 	$('#calendar').fullCalendar({
 		lang: 'es',
 		header: {
@@ -17,11 +16,11 @@ openerp.website.if_dom_contains('#calendar', function(){
 		selectable: true,
 		unselectAuto: false,
 		defaultView: get_responsive_calendar_view(),
-		timezone: 'local',
+		//timezone: 'local',
 		/*eventRender: function(event, el) {
 			console.log("Color Evento: " + event.color)
 		},*/
-		
+
 		// Callbacks
         eventDrop: function (event, _delta, _revertFunc) {
             uc_event(event, _revertFunc);
@@ -33,46 +32,62 @@ openerp.website.if_dom_contains('#calendar', function(){
         },
 		eventClick: function(event) {
 			$modal = $('#modalCalendarNewEvent');
-			$modal.data('start_date', event.start);
+			$modal.data('start_date', event.start.clone().utc());
 			if (!event.end) {
 				event.end = event.start;
-				event.end.add(1, 'days');
+				if (!event.allDay) {
+					event.end.add(1, 'days');
+				}
 			}
-			$modal.data('end_date', event.end);
-			$modal.data('title', event.title);
+			$modal.data('end_date', event.end.clone().utc());
+			$modal.data('title', event.title || '');
 			$modal.data('allday', event.allDay);
+			$modal.data('desc', event.description || '');
 			$modal.data('id', event.id);
 			$modal.modal('show');
 		},
 		select: function (start_date, end_date) {
-			if (start_date.isBefore(moment().utc()))
+			if (start_date.isBefore(moment()))
 			{
 				$('#calendar').fullCalendar('unselect');
+				alert('No se pueden crear eventos en el pasado!');
 				return;
 			}
-			
-			var diffdays = end_date.diff(start_date, 'day');
+
+			end_date.subtract(1, 'm');
+
+			var diffdays = end_date.clone().startOf('day').diff(start_date.clone().startOf('day'), 'day');
 			$modal = $('#modalCalendarNewEvent');
-			$modal.data('start_date',start_date);
-			$modal.data('end_date', end_date);
-			$modal.data('allday', (!end_date.hasTime()&&diffdays==1));
+			$modal.data('start_date', start_date.clone().utc());
+			$modal.data('end_date', end_date.clone().utc());
+			$modal.data('allday', !diffdays);
 			$modal.data('title', '');
+			$modal.data('desc', '');
 			$modal.data('id', -1);
 			$modal.modal('show');
-        }
+    },
+		dayMousedown: function(ev) {
+			if (date.isBefore(moment().utc())) {
+				$(this).css('background-color', 'red');
+			}
+		}
 	});
-	
+
 	// Poner la vista mas adecuada al tamaño de la pantalla
 	$(window).resize(function(){
 		$('#calendar').fullCalendar('changeView', get_responsive_calendar_view());
 	});
-	
+
 	// VENTANA NUEVO/MODIFICAR EVENTO
 	$('#modalCalendarNewEvent').modal({
 		'show':false,
 		'backdrop': false
 	});
 
+	$('#modalCalendarNewEvent #event-allday').on('change', function(e){
+		$('#event-starts').data("DateTimePicker").format(e.target.checked?'DD/MM/YYYY':'DD/MM/YYYY H:mm');
+		$('#event-ends').data("DateTimePicker").format(e.target.checked?'DD/MM/YYYY':'DD/MM/YYYY H:mm');
+	});
 	$('#modalCalendarNewEvent').on('hide.bs.modal', function(e){
 		$('#calendar').fullCalendar('unselect');
 	});
@@ -80,20 +95,23 @@ openerp.website.if_dom_contains('#calendar', function(){
 		$modal = $(this);
 		start_date = $modal.data('start_date');
 		end_date = $modal.data('end_date');
-		
-		start_date = start_date;
-		end_date = end_date;
-		
+
 		title = $modal.data('title');
+		desc = $modal.data('desc');
 		id = $modal.data('id');
 		allday = $modal.data('allday');
 		is_new = (id===-1);
-		
+
+		var $dtpEnd = $modal.find('#event-ends');
+		var $dtpStart = $modal.find('#event-starts');
+		$dtpEnd.data("DateTimePicker").minDate(false);
+		$dtpStart.data("DateTimePicker").maxDate(false);
+		$dtpStart.data("DateTimePicker").date(start_date);
+		$dtpEnd.data("DateTimePicker").date(end_date);
+
 		$modal.find('#event-name').val(title);
-		$modal.find('#event-starts').data("DateTimePicker").date(start_date);
-		$modal.find('#event-ends').data("DateTimePicker").date(end_date);
-		$modal.find('#event-allday').prop('checked', allday);
-		
+		$modal.find('#event-desc').val(desc);
+		$modal.find('#event-allday').prop('checked', allday).change();
 		$modal.find('.modal-title').text(is_new?'Nuevo Evento':'Modificar Evento');
 		$modal.find('button.btn-primary').text(is_new?'Crear':'Modificar');
 		$modal.find('#event-delete').css('display', is_new?'none':'inline');
@@ -101,20 +119,26 @@ openerp.website.if_dom_contains('#calendar', function(){
 	});
 	$('#modalCalendarNewEvent .btn-primary').on('click', function(){
 		$modal = $('#modalCalendarNewEvent');
-		
-		start_date = $modal.find('#event-starts').data("DateTimePicker").date().utc();
-		end_date = $modal.find('#event-ends').data("DateTimePicker").date().utc();
+
+		start_date = $modal.find('#event-starts').data("DateTimePicker").date().clone();
+		end_date = $modal.find('#event-ends').data("DateTimePicker").date().clone();
 		title = $modal.find('input#event-name').val();
+		desc = $modal.find('input#event-desc').val();
 		allday = $modal.find('input#event-allday').prop('checked');
 		id = $modal.data('id');
-		
-		uc_event({
+
+		ev_vals = {
 			'id': id,
 			'start': start_date,
 			'end': end_date,
 			'allDay': allday,
-			'title': title
-		});
+			'title': title,
+			'description': desc,
+		};
+		if (allday) {
+			ev_vals['end'] = start_date;
+		}
+		uc_event(ev_vals);
 		$('#modalCalendarNewEvent').modal('hide');
 	});
 	$('#modalCalendarNewEvent #event-delete').on('click', function(){
@@ -126,23 +150,24 @@ openerp.website.if_dom_contains('#calendar', function(){
 			$('#modalCalendarNewEvent').modal('hide');
 		}
 	});
-	
+
 	// DATE TIME PICKERS
 	$('.date').datetimepicker({
     	locale: 'es',
-    	useCurrent: false //Important! See issue #1075
+    	useCurrent: false, //Important! See issue #1075
+			format: 'DD/MM/YYYY H:mm'
     });
-	
+
 	$("#event-starts").on("dp.change", function (e) {
         $('#event-ends').data("DateTimePicker").minDate(e.date);
     });
     $("#event-ends").on("dp.change", function (e) {
         $('#event-starts').data("DateTimePicker").maxDate(e.date);
     });
-	
+
 	// Cargar Calendario
 	refresh_calendar_events();
-	
+
 });
 
 /**
@@ -174,7 +199,7 @@ function uc_event(event, _revertFunc)
 				_revertFunc();
 		}
 		else
-		{			
+		{
 			refresh_calendar_events();
 		}
 	});
@@ -190,9 +215,9 @@ function refresh_calendar_events()
 				data[i].start = moment.utc(data[i].start);
 				data[i].end = moment.utc(data[i].end);
 			}
-			
+
 			$('#calendar').fullCalendar('removeEvents');
-	        $('#calendar').fullCalendar('addEventSource', data);         
+	        $('#calendar').fullCalendar('addEventSource', data);
 	        $('#calendar').fullCalendar('rerenderEvents');
 		}
 	});

@@ -34,7 +34,7 @@
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
     # for the full list
     'category': 'Theme/Creative',
-    "icon": "/aloxa_sevigal_website/static/src/img/LogoSevigal.png",    
+    "icon": "/aloxa_sevigal_website/static/src/img/LogoSevigal.png",
     'version': '0.1',
 
     # any module necessary for this one to work correctly
@@ -50,14 +50,14 @@
     ],
 
     # always loaded
-    'data': [        
+    'data': [
         'views/templates.xml',
         'views/forum.xml',
         'views/forum_mobile.xml'
         #'security/ir.model.access.csv',
     ],
     # only loaded in demonstration mode
-    'demo': [        
+    'demo': [
     ],
     'installable': True,
     'application': True,

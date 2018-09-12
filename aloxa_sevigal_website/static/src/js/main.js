@@ -45,7 +45,7 @@ $.fn.is_top_on_screen = function(){
  * GENERAL
  */
 $(function(){
-	
+
 	// MENU PEGAJOSO
 	/*$(window).on("load resize scroll",function(e){
 	    if (!$(".menu-principal").is_top_on_screen())
@@ -64,7 +64,7 @@ $(function(){
 	// Nuevo Menu
     //stick in the fixed 100% height behind the navbar but don't wrap it
 	$('#slide-nav.navbar-inverse').after($('<div class="inverse" id="navbar-height-col"></div>'));
-	$('#slide-nav.navbar-default').after($('<div id="navbar-height-col"></div>'));  
+	$('#slide-nav.navbar-default').after($('<div id="navbar-height-col"></div>'));
 
 	// Enter your ids or classes
 	var toggler = '.navbar-toggle';
@@ -105,8 +105,8 @@ $(function(){
             $(selected).removeClass('slide-active');
         }
     });*/
-	
-	
+
+
 	// Borrar Contacto
 	$(document).on('click', '.remove-contact', function(ev){
 		var contact_id = $(this).data('id');
@@ -120,7 +120,7 @@ $(function(){
 		add_contact(phone, desc);
 		return false;
 	});
-	
+
 	// Archivar Mensajes
     $('.archive_question').on('click', function (ev) {
         ev.preventDefault();
@@ -135,6 +135,21 @@ $(function(){
             }
         });
     });
+
+  // Respuesta Correcta
+  $('.accept_answer').on('click', function (ev) {
+      ev.preventDefault();
+      var $link = $(ev.currentTarget);
+      openerp.jsonRpc($link.data('href'), 'call', {}).then(function (data) {
+          if (data) {
+              $link.addClass("oe_answer_true");
+              $link.removeClass("oe_answer_false");
+          } else {
+              $link.removeClass("oe_answer_true");
+              $link.addClass("oe_answer_false");
+          }
+      });
+  });
 });
 
 /**
@@ -152,7 +167,7 @@ function add_contact(phone, desc)
 {
 	if (!phone)
 		return;
-	
+
 	var ev = {'phone': phone, 'description': desc};
 	openerp.jsonRpc('/_add_contact/', 'call', ev).then(function(data){
 		$("#modalNewPhoneNumber button[type='submit']").removeAttr("disable");
@@ -160,7 +175,7 @@ function add_contact(phone, desc)
 		{
 			$('#nphone').val('');
 			$('#ndesc').val('');
-			
+
 			var strElm = "<tr id='contact-"+data['success']+"'>";
 			strElm += "<td>"+phone+"</td>";
 			strElm += "<td>"+desc+"</td>";
@@ -189,7 +204,7 @@ openerp.website.if_dom_contains('#content', function(){
 	    if (typeof editor !== 'undefined')
 	    	editor.on('instanceReady', CKEDITORLoadComplete);
 	}
-	
+
     function CKEDITORLoadComplete(){
         "use strict";
         $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(33,30)');
@@ -216,11 +231,11 @@ function refresh_unread_alerts_count()
 			{
 				var num = data['num'];
 				var last_id = data['last_id'];
-				
+
 				$('#unread_alerts_badge').text(num);
 				$('#unread_alerts_badge').css('display','inline');
 				$('#bell-icon').addClass('bell-anim');
-				
+
 				if (last_id != Cookies.get('last_unread_alert_id'))
 				{
 					Cookies.set('last_unread_alert_id', last_id);
@@ -255,22 +270,28 @@ function get_event_data(event)
 {
     var data = {
     	id: event.id,
-        allday: event.allDay,
-        title: event.title
-    };            
-    
-    //Bug when we move an all_day event from week or day view, we don't have a dateend or duration...            
+      allday: event.allDay,
+      title: event.title,
+      description: event.description,
+    };
+
+    //Bug when we move an all_day event from week or day view, we don't have a dateend or duration...
     if (event.end == null || _.isUndefined(event.end))
     {
-    	date_end = event.start;
+    	date_end = event.start.clone();
     	date_end.add(2, 'hours');
     }
     else
     	date_end = event.end;
-    
-    data['start'] = moment.utc(event.start).format("YYYY-MM-DD HH:mm:ss");
-    data['stop'] = moment.utc(date_end).format("YYYY-MM-DD HH:mm:ss");
-    
+
+    if (event.allDay) {
+      data['start'] = event.start.clone().local().format("YYYY-MM-DD");
+      data['stop'] = date_end.clone().local().format("YYYY-MM-DD");
+    } else {
+      // Strange conversion to truncate UTC... need exists a better way to do this...
+      data['start'] = moment(event.start.format("YYYY-MM-DD HH:mm:ss"), "YYYY-MM-DD HH:mm:ss").utc().format("YYYY-MM-DD HH:mm:ss");
+      data['stop'] = moment(date_end.format("YYYY-MM-DD HH:mm:ss"), "YYYY-MM-DD HH:mm:ss").utc().format("YYYY-MM-DD HH:mm:ss");
+    }
+
     return data;
 }
-

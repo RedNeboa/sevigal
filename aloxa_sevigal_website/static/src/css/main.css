@@ -115,12 +115,15 @@ body.slide-active {
 .navbar-header {
     position: relative
 }
+.navbar.navbar-fixed-top {
+  padding: 0 1em;
+}
 /* un fix the navbar when active so that all the menu items are accessible */
 .navbar.navbar-fixed-top.slide-active {
     position: relative
 }
 /* screw writing importants and shit, just stick it in max width since these classes are not shared between sizes */
-@media (max-width:768px) { 
+@media (max-width:768px) {
 	#slide-nav .container {
 	    margin: 0!important;
 	    padding: 0!important;
@@ -192,7 +195,7 @@ body.slide-active {
 	    width: 100%
 	}
 }
-@media (min-width:768px) { 
+@media (min-width:768px) {
 	#page-content {
 	    left: 0!important
 	}
@@ -206,7 +209,7 @@ body.slide-active {
 
 /** CALENDARIO **/
 .mobile-calendar-event {
-  border:1px solid gray; 
+  border:1px solid gray;
   margin-bottom:5px;
 }
 .mobile-calendar-date {
