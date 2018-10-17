@@ -58,7 +58,7 @@ class servicio(models.Model):
                 product_id = self.env.context['product_id']
                 cantidad = self.env.context['cantidad_servicio']
                 product = self.env['product.product'].browse(product_id)
-                linea_invoice = contrato.obtener_line_factu_recurr_no_pack(product)
+                linea_invoice = contrato.obtener_line_factu_recurr_no_pack(product)[0]
                 linea_invoice.quantity += cantidad
 
                 res.linea_fact_recurr_id = linea_invoice.id
@@ -239,7 +239,7 @@ class fax2mail(models.Model):
 
                                         else:
                                             linea = contrato.obtener_line_factu_recurr_no_pack(
-                                                pcline.product_id)
+                                                pcline.product_id)[0]
                                             if linea:
                                                 linea.quantity += 1
 
@@ -251,8 +251,8 @@ class fax2mail(models.Model):
                 '''
                 if contrato and 'product_id' in self.env.context:
                     product_id = self.env.context['product_id']
-                    product = self.env['product.product'].browse(product_id.id)
-                    linea_invoice = contrato.obtener_line_factu_recurr_no_pack(product)
+                    product = self.env['product.product'].browse(product_id)
+                    linea_invoice = contrato.obtener_line_factu_recurr_no_pack(product)[0]
                     linea_invoice.quantity += 1
                     res.linea_fact_recurr_id = linea_invoice.id
                 res.registrado = True

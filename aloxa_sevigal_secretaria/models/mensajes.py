@@ -44,5 +44,3 @@ class forum_post(models.Model):
         ('Viaje', 'Viaje'),
     ], string="Tipo de Mensaje")
     partner_id = fields.Many2one('res.partner', 'Receptor')
-
-forum_post()

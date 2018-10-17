@@ -141,8 +141,6 @@ class telefono_adicional_cliente(models.Model):
     numero = fields.Char('Número', size=14)
     partner_id = fields.Many2one('res.partner', 'Cliente')
 
-telefono_adicional_cliente()
-
 class protocolos_cliente(models.Model):
     _name = 'sevigal.protocolo'
 
@@ -156,5 +154,3 @@ class protocolos_cliente(models.Model):
     condicion = fields.Char('Condicion', size=120)
     destino = fields.Char('Destino', size=120)
     partner_id = fields.Many2one('res.partner')
-
-protocolos_cliente()

@@ -101,5 +101,3 @@ class avisos(models.Model):
     def _needaction_domain_get(self):
         self.obtener_eventos_mensajes()
         return [('leido', '=', False)]
-
-avisos()
