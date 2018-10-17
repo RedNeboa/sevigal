@@ -82,7 +82,7 @@ body.slide-active {
 #page-content {
     position: relative;
     padding-top: 0.5em;
-    margin-top: 50px; /* Se verá mal con administrador ya que es para corregir el espacio del menu de admin */
+    /*margin-top: 50px;*/ /* Se verá mal con administrador ya que es para corregir el espacio del menu de admin */
     left: 0;
 }
 #page-content.slide-active {
@@ -211,9 +211,11 @@ body.slide-active {
 .mobile-calendar-event {
   border:1px solid gray;
   margin-bottom:5px;
+  background-color: #EEEEEE;
 }
 .mobile-calendar-date {
   margin-top:1.5em;
+  font-weight: bold;
 }
 .mobile-calendar-title {
   padding: 0.5em 0.8em;

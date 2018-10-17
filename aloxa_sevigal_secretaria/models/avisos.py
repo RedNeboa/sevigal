@@ -80,7 +80,7 @@ class avisos(models.Model):
             event_write_date, lo cual indica que se actualizo el evento asociado,
             se vuelve a poner leido=False para que lo vuelta a mostrar
             '''
-            if not self.search([('event_id', '=', evento.id)]):
+            if not isinstance(evento.id, str) and not self.search([('event_id', '=', evento.id)]):
                 self.create({
                     'name': evento.name,
                     'tipo': 'Evento',
