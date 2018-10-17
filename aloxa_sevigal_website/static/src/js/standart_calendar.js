@@ -32,14 +32,14 @@ openerp.website.if_dom_contains('#calendar', function(){
         },
 		eventClick: function(event) {
 			$modal = $('#modalCalendarNewEvent');
-			$modal.data('start_date', event.start.clone().utc());
+			$modal.data('start_date', event.start.clone());
 			if (!event.end) {
 				event.end = event.start;
 				if (!event.allDay) {
 					event.end.add(1, 'days');
 				}
 			}
-			$modal.data('end_date', event.end.clone().utc());
+			$modal.data('end_date', event.end.clone());
 			$modal.data('title', event.title || '');
 			$modal.data('allday', event.allDay);
 			$modal.data('desc', event.description || '');
@@ -58,8 +58,8 @@ openerp.website.if_dom_contains('#calendar', function(){
 
 			var diffdays = end_date.clone().startOf('day').diff(start_date.clone().startOf('day'), 'day');
 			$modal = $('#modalCalendarNewEvent');
-			$modal.data('start_date', start_date.clone().utc());
-			$modal.data('end_date', end_date.clone().utc());
+			$modal.data('start_date', start_date.clone());
+			$modal.data('end_date', end_date.clone());
 			$modal.data('allday', !diffdays);
 			$modal.data('title', '');
 			$modal.data('desc', '');
@@ -67,7 +67,7 @@ openerp.website.if_dom_contains('#calendar', function(){
 			$modal.modal('show');
     },
 		dayMousedown: function(ev) {
-			if (date.isBefore(moment().utc())) {
+			if (date.isBefore(moment())) {
 				$(this).css('background-color', 'red');
 			}
 		}
